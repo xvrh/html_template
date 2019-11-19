@@ -1,0 +1,17 @@
+# Read about `build.yaml` at https://pub.dev/packages/build_config
+targets:
+  $default:
+    builders:
+      html_template|html_template:
+        generate_for:
+          - example/*
+          - test/integration/*
+
+builders:
+  html_template:
+    import: "package:html_template/builder.dart"
+    builder_factories: ["templateBuilder"]
+    build_extensions: {".dart": ["template_builder.g.part"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
