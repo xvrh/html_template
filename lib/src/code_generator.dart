@@ -79,7 +79,6 @@ String generateCodeFromFunction(FunctionDeclaration function,
 
     code.writeln(bodyCode);
   } else if (body is ExpressionFunctionBody) {
-    //TODO(xha): supporter d'autres expression comme (condition ? 'literal 1' : 'literal 2')
     StringLiteral expression = body.expression;
     code.write(_handleStringLiteral(options, expression));
   } else {
@@ -314,8 +313,6 @@ class _CodeWriter {
         }
       }
 
-      //TODO(xha): techniquement il faut émettre tous les éléments ou tous les textes
-      // en dehors de la balise switch. (pas faire un cas unique avec le texte vide.
       bool isSwitch = attributes.structurals.any((a) => a is SwitchAttribute);
       for (Node child in element.nodes) {
         writeNode(child, skipEmptyText: isSwitch);

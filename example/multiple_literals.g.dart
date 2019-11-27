@@ -10,12 +10,13 @@ part of 'multiple_literals.dart';
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   var $ = StringBuffer();
 
+  $.write('<h1>');
   $.write('Title');
-
-  if (showMenu) {
-    $.write('<h1>');
-    $.write('Title');
-    $.write('</h1>');
+  $.write('</h1>');
+  if (!showMenu) {
+    $.write('<h2>');
+    $.write('Sub title');
+    $.write('</h2>');
   } else {
     Data item;
     $.write('    ');
@@ -30,7 +31,9 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
     $.write('</ul>');
     $.write('\n    ');
   }
-  $.write('end');
+  $.write('<footer>');
+  $.write('Footer');
+  $.write('</footer>');
 
   return TrustedHtml('${$}');
 }

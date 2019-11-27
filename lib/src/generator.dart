@@ -41,8 +41,6 @@ FunctionDeclaration _extractFunctionDeclaration(String fileContent,
   }
   var unit = parsed.unit;
 
-  // TODO(xha): trouver dans les classes imbriquées
-
   return unit.declarations
       .whereType<FunctionDeclaration>()
       .firstWhere((d) => d.name.name == functionName);
