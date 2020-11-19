@@ -1,13 +1,13 @@
 name: html_template
-description: An HTML template engine based on String interpolation.
-version: 0.1.0
+description: A server-side HTML template engine based on String interpolation.
+version: 0.1.1
 homepage: https://github.com/xvrh/html_template
 
 environment:
   sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
-  analyzer: ^0.40.0
+  analyzer: '>=0.40.0 <0.42.0'
   build: ^1.5.0
   dart_style: ^1.3.9
   html: ^0.14.0

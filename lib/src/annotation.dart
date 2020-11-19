@@ -3,6 +3,7 @@ import 'dart:convert';
 class TemplateAnnotation {
   const TemplateAnnotation();
 
+  /// Returns the attribute if the condition is true.
   String attributeIf(String attributeName, bool condition) {
     if (condition) {
       return ' $attributeName';
@@ -10,6 +11,7 @@ class TemplateAnnotation {
     return '';
   }
 
+  /// Build a class attribute
   String classAttribute(Object class1,
       [Object class2, Object class3, Object class4, Object class5]) {
     var classes = <String>{};
@@ -37,8 +39,10 @@ class TemplateAnnotation {
   }
 }
 
+/// The annotation to put on a private method to activate the builder on it.
 const template = TemplateAnnotation();
 
+/// A marker class to recognize HTML that should not be sanitized.
 class TrustedHtml {
   static final escape = _Escape();
   final String _value;
