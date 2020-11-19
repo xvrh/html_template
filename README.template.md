@@ -1,10 +1,10 @@
 # html_template
 
-A server-side HTML templating engine in Dart.
+A server-side HTML template engine in Dart.
 
-![intellij-screenshot](doc/screenshot.png)
+![intellij-screenshot](https://raw.githubusercontent.com/xvrh/html_template/master/doc/screenshot.png)
 
-## Features
+### Features
 
 - Auto-completion and static analysis in the template.
 - Classical control-flow constructs: `*if`, `*for`, `*switch`
@@ -12,9 +12,8 @@ A server-side HTML templating engine in Dart.
 - Automatically escapes the variables
 - Syntax highlighting (in IntelliJ-based IDE)
 
-## Examples
+### Example
 
-### Full basic example
 #### Write the template code
 
 Declare a private `void` function tagged with a `@template` attribute:
@@ -40,7 +39,7 @@ Call the generated public methods to build the HTML page from your data.
 import 'example/lib/main.dart#usage';
 ```
 
-### Condition
+### Conditions
 ```dart
 import 'example/lib/condition.dart#simple';
 ```
@@ -70,7 +69,7 @@ import 'example/lib/switch.dart#switch';
 import 'example/lib/css_classes.dart#classes';
 ```
 
-### Normal Dart code
+### Dart code
 You can use normal Dart code around the string literals to do complex things in your template.
 You can have has many strings literal as you want.
 
@@ -78,7 +77,7 @@ You can have has many strings literal as you want.
 import 'example/lib/multiple_literals.dart#complex';
 ```
 
-### Nested template
+### Nested template & master layout
 Include another template by calling the generated function in a string interpolation:
 
 ```dart
