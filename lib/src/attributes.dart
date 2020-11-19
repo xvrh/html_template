@@ -1,5 +1,5 @@
-import 'code_generator.dart' show GeneratorException;
 import 'package:meta/meta.dart';
+import 'code_generator.dart' show GeneratorException;
 import 'interpolation.dart';
 
 final _classAttributeExtractor =
@@ -16,18 +16,20 @@ final _structuralDirectives = <String, StructuralAttribute Function(String)>{
 };
 
 class Attributes {
-  final stringReplacements;
+  final Map<String, String> stringReplacements;
   final Map<String, String> _attributes;
   final _class = <String, String>{};
   final _classes = <String>[];
   final structurals = <StructuralAttribute>[];
 
-  Attributes(Map<dynamic, String> attributesFromElement, {@required this.stringReplacements})
+  Attributes(Map<Object, String> attributesFromElement,
+      {@required this.stringReplacements})
       : _attributes =
             attributesFromElement.map((k, v) => MapEntry(k.toString(), v)) {
-    for (var name in _attributes.keys.toList()) {
+    for (var attribute in _attributes.entries.toList()) {
+      var name = attribute.key;
       var classMatch = _classAttributeExtractor.firstMatch(name);
-      var attributeValue = _withInterpolation(_attributes[name], escape: false);
+      var attributeValue = _withInterpolation(attribute.value, escape: false);
       if (classMatch != null) {
         _class[classMatch.group(1)] = extractInterpolation(attributeValue);
         _attributes.remove(name);
@@ -57,8 +59,9 @@ class Attributes {
 
   String toCode() {
     var code = <String>[];
-    for (var name in _attributes.keys) {
-      var value = _attributes[name];
+    for (var entry in _attributes.entries) {
+      var value = entry.value;
+      var name = entry.key;
 
       var conditionalMatch = _conditionalExtractor.firstMatch(name);
       if (conditionalMatch != null) {
@@ -66,11 +69,12 @@ class Attributes {
             "\${template.attributeIf('${conditionalMatch.group(1)}', ${extractInterpolation(_withInterpolation(value, escape: false))})}");
       } else {
         value = value.replaceAll("'", r"\'");
-        code.add(' ${_withInterpolation(name, escape: false)}="${_withInterpolation(value, escape: true)}"');
+        code.add(
+            ' ${_withInterpolation(name, escape: false)}="${_withInterpolation(value, escape: true)}"');
       }
     }
     if (_class.isNotEmpty || _classes.isNotEmpty) {
-      var classArguments = [];
+      var classArguments = <String>[];
       classArguments.addAll(_classes);
       if (_class.isNotEmpty) {
         var mapArguments =

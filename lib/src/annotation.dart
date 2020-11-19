@@ -10,18 +10,18 @@ class TemplateAnnotation {
     return '';
   }
 
-  String classAttribute(dynamic class1,
-      [dynamic class2, dynamic class3, dynamic class4, dynamic class5]) {
+  String classAttribute(Object class1,
+      [Object class2, Object class3, Object class4, Object class5]) {
     var classes = <String>{};
     for (var arg in [class1, class2, class3, class4, class5]) {
       if (arg != null) {
-        if (arg is Iterable) {
+        if (arg is Iterable<String>) {
           classes.addAll(arg);
-        } else if (arg is Map) {
-          for (String className in arg.keys) {
-            bool condition = arg[className];
+        } else if (arg is Map<String, bool>) {
+          for (var classEntry in arg.entries) {
+            var condition = classEntry.value;
             if (condition) {
-              classes.add(className);
+              classes.add(classEntry.key);
             }
           }
         } else if (arg is String) {
@@ -45,12 +45,15 @@ class TrustedHtml {
 
   TrustedHtml(this._value);
 
-  toString() => _value;
+  @override
+  String toString() => _value;
 
-  bool operator ==(other) =>
+  @override
+  bool operator ==(Object other) =>
       other is TrustedHtml && '$other' == '$this' ||
       other is String && other == '$this';
 
+  @override
   int get hashCode => _value.hashCode;
 }
 
@@ -59,18 +62,18 @@ class _Escape {
   static const _attribute = HtmlEscape(HtmlEscapeMode.attribute);
   static const _sqAttribute = HtmlEscape(HtmlEscapeMode.sqAttribute);
 
-  String call(input) {
+  String call(Object input) {
     if (input == null) return '';
     if (input is TrustedHtml) return '$input';
     return _element.convert('$input');
   }
 
-  String attribute(input) {
+  String attribute(Object input) {
     if (input == null) return '';
     return _Escape._attribute.convert('$input');
   }
 
-  String attributeSingleQuote(input) {
+  String attributeSingleQuote(Object input) {
     if (input == null) return '';
     return _Escape._sqAttribute.convert('$input');
   }

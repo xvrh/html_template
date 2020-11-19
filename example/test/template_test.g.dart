@@ -10,7 +10,7 @@ part of 'template_test.dart';
 TrustedHtml emptyTemplate() {
   var $ = StringBuffer();
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 
 @GenerateFor(_simpleTemplate)
@@ -21,7 +21,7 @@ TrustedHtml simpleTemplate() {
   $.write('Title');
   $.write('</h1>');
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 
 @GenerateFor(_condition)
@@ -32,7 +32,7 @@ TrustedHtml condition({bool myVar = false}) {
     $.write('True');
   }
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 
 @GenerateFor(_interpolation)
@@ -41,7 +41,7 @@ TrustedHtml interpolation(String someText) {
 
   $.write('-${TrustedHtml.escape(someText)}-');
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 
 @GenerateFor(_loop)
@@ -55,7 +55,7 @@ TrustedHtml loop(Iterable<String> list) {
     $.write('</li>');
   }
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 
 @GenerateFor(_switchTemplate)
@@ -87,7 +87,7 @@ TrustedHtml switchTemplate(MyEnum myEnum) {
   $.write('End');
   $.write('</span>');
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 
 @GenerateFor(_attribute)
@@ -105,5 +105,5 @@ TrustedHtml attribute(
   $.write('</span>');
   $.write('\n');
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }

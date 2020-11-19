@@ -1,12 +1,11 @@
-import 'code_generator.dart';
-
-import 'annotation.dart';
-import 'package:source_gen/source_gen.dart';
-import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/ast/ast.dart';
-import 'package:build/build.dart';
 import 'package:analyzer/dart/analysis/utilities.dart';
+import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/element/element.dart';
+import 'package:build/build.dart';
 import 'package:meta/meta.dart';
+import 'package:source_gen/source_gen.dart';
+import 'annotation.dart';
+import 'code_generator.dart';
 
 class TemplateGenerator extends GeneratorForAnnotation<TemplateAnnotation> {
   const TemplateGenerator();
@@ -20,10 +19,9 @@ class TemplateGenerator extends GeneratorForAnnotation<TemplateAnnotation> {
           element: element);
     }
 
-    FunctionElement function = element;
     var functionDeclaration = _extractFunctionDeclaration(
-        function.source.contents.data,
-        functionName: function.name);
+        element.source.contents.data,
+        functionName: element.name);
 
     try {
       return generateCodeFromFunction(functionDeclaration);
@@ -34,7 +32,7 @@ class TemplateGenerator extends GeneratorForAnnotation<TemplateAnnotation> {
 }
 
 FunctionDeclaration _extractFunctionDeclaration(String fileContent,
-    {@required String functionName, String className}) {
+    {@required String functionName}) {
   var parsed = parseString(content: fileContent);
   if (parsed.errors.isNotEmpty) {
     throw Exception(parsed.errors.toString());

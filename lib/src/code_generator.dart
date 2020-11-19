@@ -1,20 +1,29 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
-import 'package:analyzer/dart/ast/visitor.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
+import 'package:analyzer/src/dart/ast/to_source_visitor.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:html/dom.dart' hide Comment;
 import 'package:html/dom.dart' as html;
-import 'package:html/parser.dart';
 import 'package:html/dom_parsing.dart';
+import 'package:html/parser.dart';
 import 'package:html/src/constants.dart';
-
 import 'attributes.dart';
-import 'package:analyzer/src/dart/ast/to_source_visitor.dart';
 
 class Options {
   final bool skipWhitespaces;
+  final bool addGenerateForAttribute;
 
-  Options({bool skipWhitespaces}) : skipWhitespaces = skipWhitespaces ?? false;
+  Options({bool skipWhitespaces, bool addGenerateForAttribute})
+      : skipWhitespaces = skipWhitespaces ?? false,
+        addGenerateForAttribute = addGenerateForAttribute ?? true;
+
+  Options copyWith({bool skipWhitespaces, bool addGenerateForAttribute}) =>
+      Options(
+        skipWhitespaces: skipWhitespaces ?? this.skipWhitespaces,
+        addGenerateForAttribute:
+            addGenerateForAttribute ?? this.addGenerateForAttribute,
+      );
 }
 
 class GeneratorException implements Exception {
@@ -22,7 +31,8 @@ class GeneratorException implements Exception {
 
   GeneratorException(this.message);
 
-  toString() => message;
+  @override
+  String toString() => message;
 }
 
 String generateCode(String input, {Options options}) {
@@ -32,8 +42,7 @@ String generateCode(String input, {Options options}) {
   }
   var unit = parsed.unit;
 
-  var firstFunction =
-      unit.declarations.firstWhere((f) => f is FunctionDeclaration);
+  var firstFunction = unit.declarations.whereType<FunctionDeclaration>().first;
   var rawCode = generateCodeFromFunction(firstFunction, options: options);
 
   try {
@@ -56,12 +65,14 @@ String generateCodeFromFunction(FunctionDeclaration function,
   var functionName = function.name.name.substring(1);
 
   var returnType = 'TrustedHtml';
-  if (_isType(function.returnType, 'Future') ||
+  if (function.returnType.toString().startsWith('Future') ||
       function.functionExpression.body.isAsynchronous) {
     returnType = 'Future<$returnType>';
   }
 
-  code.writeln('@GenerateFor(${function.name.name})');
+  if (options.addGenerateForAttribute) {
+    code.writeln('@GenerateFor(${function.name.name})');
+  }
   code.writeln(
       '$returnType $functionName${function.functionExpression.parameters} '
       '${function.functionExpression.body.isAsynchronous ? 'async' : ''} {');
@@ -79,14 +90,14 @@ String generateCodeFromFunction(FunctionDeclaration function,
 
     code.writeln(bodyCode);
   } else if (body is ExpressionFunctionBody) {
-    StringLiteral expression = body.expression;
+    var expression = body.expression as StringLiteral;
     code.write(_handleStringLiteral(options, expression));
   } else {
     throw UnimplementedError();
   }
 
   code.writeln('');
-  code.writeln(r"return TrustedHtml('${$}');");
+  code.writeln(r'return TrustedHtml($.toString());');
   code.write('}');
 
   return code.toString();
@@ -102,8 +113,9 @@ class _Visitor extends RecursiveAstVisitor<void> {
   void visitExpressionStatement(ExpressionStatement node) {
     super.visitExpressionStatement(node);
 
-    if (node.expression is StringLiteral) {
-      var newCode = _handleStringLiteral(options, node.expression);
+    var expression = node.expression;
+    if (expression is StringLiteral) {
+      var newCode = _handleStringLiteral(options, expression);
 
       _replacements.add(_Replacement(node, newCode));
     }
@@ -122,6 +134,7 @@ class _Printer extends ToSourceVisitor {
 
   _Printer(StringSink sink, this.replacements) : super(sink);
 
+  @override
   void visitExpressionStatement(ExpressionStatement node) {
     var replacement =
         replacements.firstWhere((f) => f.source == node, orElse: () => null);
@@ -133,11 +146,6 @@ class _Printer extends ToSourceVisitor {
   }
 }
 
-bool _isType(TypeName annotation, String typeToMatch) {
-  if (annotation == null) return false;
-  return annotation.name.name == typeToMatch;
-}
-
 String _handleStringLiteral(Options options, StringLiteral literal) {
   var content = literal.stringValue;
   var outputer = _CodeWriter(options);
@@ -147,10 +155,10 @@ String _handleStringLiteral(Options options, StringLiteral literal) {
         _InterpolationEscaper(literalBuffer, outputer.stringReplacements));
     var literalString = literalBuffer.toString();
 
-    int openOffset = literal.contentsOffset - literal.offset;
+    var openOffset = literal.contentsOffset - literal.offset;
 
-    content = literalString.substring(openOffset,
-        literalString.length - (literal.isMultiline ? 3 : 1));
+    content = literalString.substring(
+        openOffset, literalString.length - (literal.isMultiline ? 3 : 1));
   } else if (literal is AdjacentStrings) {
     throw UnimplementedError();
   } else if (content == null) {
@@ -158,7 +166,9 @@ String _handleStringLiteral(Options options, StringLiteral literal) {
   }
 
   var lowerContent = content.toLowerCase();
-  if (lowerContent.contains('<html ') || lowerContent.contains('<html>') || lowerContent.contains('<!doctype ')) {
+  if (lowerContent.contains('<html ') ||
+      lowerContent.contains('<html>') ||
+      lowerContent.contains('<!doctype ')) {
     var dom = parse(content);
     outputer.writeNode(dom);
   } else {
@@ -180,7 +190,7 @@ class _InterpolationEscaper extends ToSourceVisitor {
     var original = StringBuffer();
     node.expression.accept(ToSourceVisitor(original));
 
-    var alias = 'escapehtml${_index++}thisstringcannothappeninrealcode';
+    var alias = '@@escapehtml${_index++}%%';
 
     stringReplacements[alias] = original.toString();
     sink.write(alias);
@@ -213,13 +223,15 @@ class _CodeWriter {
     }
   }
 
-  String _withInterpolation(String data, {String Function(String) transformer}) {
-    for (var replacementKey in stringReplacements.keys) {
-      var replacement = stringReplacements[replacementKey];
+  String _withInterpolation(String data,
+      {String Function(String) transformer}) {
+    for (var replacementEntry in stringReplacements.entries) {
+      var replacement = replacementEntry.value;
       if (transformer != null) {
         replacement = transformer(replacement);
       }
-      data = data.replaceAllMapped(replacementKey, (_) => '\${$replacement}');
+      data = data.replaceAllMapped(
+          replacementEntry.key, (_) => '\${$replacement}');
     }
     return data;
   }
@@ -227,7 +239,7 @@ class _CodeWriter {
   void _writeText(Text node, {bool skipEmptyText}) {
     skipEmptyText ??= false;
 
-    bool shouldEscape = true;
+    var shouldEscape = true;
     final parent = node.parentNode;
     if (parent is Element) {
       var tag = parent.localName;
@@ -242,7 +254,7 @@ class _CodeWriter {
       return;
     }
     var quote = "'";
-    if (text.contains("\n")) {
+    if (text.contains('\n')) {
       if (_hasNonWhitespace.hasMatch(text)) {
         quote = "'''";
       } else {
@@ -258,36 +270,38 @@ class _CodeWriter {
     }
 
     text = _withInterpolation(text,
-        transformer: shouldEscape ? (s) => 'TrustedHtml.escape(${s})' : null);
+        transformer: shouldEscape ? (s) => 'TrustedHtml.escape($s)' : null);
 
-    output.writeln("\$.write($quote$text$quote);");
+    output.writeln('\$.write($quote$text$quote);');
   }
 
   void _writeComment(html.Comment comment) {
     output.writeln(
-        "\$.writeln('''<!-- ${_withInterpolation(comment.data, transformer: (s) => 'TrustedHtml.escape(${s})')} -->''');");
+        "\$.writeln('''<!-- ${_withInterpolation(comment.data, transformer: (s) => 'TrustedHtml.escape($s)')} -->''');");
   }
 
   void _writeDocumentType(DocumentType documentType) {
-    output.write("\$.writeln('${_withInterpolation(documentType.toString())}');");
+    output
+        .write("\$.writeln('${_withInterpolation(documentType.toString())}');");
   }
 
   void _writeDocumentFragment(DocumentFragment documentFragment) {
-    for (Node child in documentFragment.nodes) {
+    for (var child in documentFragment.nodes) {
       writeNode(child);
     }
   }
 
   void _writeDocument(Document document) {
-    for (Node child in document.nodes) {
+    for (var child in document.nodes) {
       writeNode(child);
     }
   }
 
   void _writeElement(Element element) {
-    var attributes = Attributes(element.attributes, stringReplacements: stringReplacements);
+    var attributes = Attributes(element.attributes.cast<Object, String>(),
+        stringReplacements: stringReplacements);
 
-    bool isText = element.localName == 'text';
+    var isText = element.localName == 'text';
 
     var open =
         '<${_getSerializationPrefix(element.namespaceUri)}${_withInterpolation(element.localName)}${attributes.toCode()}>';
@@ -313,8 +327,8 @@ class _CodeWriter {
         }
       }
 
-      bool isSwitch = attributes.structurals.any((a) => a is SwitchAttribute);
-      for (Node child in element.nodes) {
+      var isSwitch = attributes.structurals.any((a) => a is SwitchAttribute);
+      for (var child in element.nodes) {
         writeNode(child, skipEmptyText: isSwitch);
       }
     }

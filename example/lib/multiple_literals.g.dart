@@ -7,17 +7,19 @@ part of 'multiple_literals.dart';
 // **************************************************************************
 
 @GenerateFor(_myTemplate)
-TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
+Future<TrustedHtml> myTemplate() async {
   var $ = StringBuffer();
 
   $.write('<h1>');
   $.write('Title');
   $.write('</h1>');
-  if (!showMenu) {
+  var myPage = buildPage();
+  if (!myPage.hasData) {
     $.write('<h2>');
     $.write('Sub title');
     $.write('</h2>');
   } else {
+    var data = await fetchData();
     Data item;
     $.write('    ');
     $.write('<ul>');
@@ -35,5 +37,5 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   $.write('Footer');
   $.write('</footer>');
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }

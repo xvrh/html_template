@@ -1,37 +1,43 @@
 import 'package:dart_style/dart_style.dart';
-import 'package:test/test.dart';
 import 'package:html_template/src/code_generator.dart';
 import 'package:html_template/src/interpolation.dart';
+import 'package:test/test.dart';
 
-main() {
+String generateCodeForTest(String input, {Options options}) {
+  options ??= Options();
+  return generateCode(input,
+      options: options.copyWith(addGenerateForAttribute: false));
+}
+
+void main() {
   test('Convert function signature with void', () {
-    var input = r"void _myTemplate({bool showMenu}) {}";
-    expect(generateCode(input),
-        startsWith(r"TrustedHtml myTemplate({bool showMenu}) {"));
+    var input = r'void _myTemplate({bool showMenu}) {}';
+    expect(generateCodeForTest(input),
+        startsWith(r'TrustedHtml myTemplate({bool showMenu}) {'));
   });
 
   test('Convert function signature with Future', () {
-    var input = r"Future _myTemplate({bool showMenu}) {}";
-    expect(generateCode(input),
-        startsWith(r"Future<TrustedHtml> myTemplate({bool showMenu}) {"));
+    var input = r'Future _myTemplate({bool showMenu}) {}';
+    expect(generateCodeForTest(input),
+        startsWith(r'Future<TrustedHtml> myTemplate({bool showMenu}) {'));
   });
 
   test('Convert function signature with Future<void>', () {
-    var input = r"Future<void> _myTemplate({bool showMenu}) {}";
-    expect(generateCode(input),
-        startsWith(r"Future<TrustedHtml> myTemplate({bool showMenu}) {"));
+    var input = r'Future<void> _myTemplate({bool showMenu}) {}';
+    expect(generateCodeForTest(input),
+        startsWith(r'Future<TrustedHtml> myTemplate({bool showMenu}) {'));
   });
 
   test('Convert function signature with empty async', () {
-    var input = r"_myTemplate({bool showMenu}) async {}";
-    expect(generateCode(input),
-        startsWith(r"Future<TrustedHtml> myTemplate({bool showMenu}) async {"));
+    var input = r'_myTemplate({bool showMenu}) async {}';
+    expect(generateCodeForTest(input),
+        startsWith(r'Future<TrustedHtml> myTemplate({bool showMenu}) async {'));
   });
 
   test('Convert function signature with empty not async', () {
-    var input = r"_myTemplate({bool showMenu}) {}";
-    expect(generateCode(input),
-        startsWith(r"TrustedHtml myTemplate({bool showMenu}) {"));
+    var input = r'_myTemplate({bool showMenu}) {}';
+    expect(generateCodeForTest(input),
+        startsWith(r'TrustedHtml myTemplate({bool showMenu}) {'));
   });
 
   test('Generate code from template function', () {
@@ -51,7 +57,7 @@ void _myTemplate({bool showMenu}) {
 }
 """;
 
-    var result = generateCode(input);
+    var result = generateCodeForTest(input);
 
     expect(result, equals(DartFormatter().format(r"""
 TrustedHtml myTemplate({bool showMenu}) {
@@ -84,7 +90,7 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
 </ul>''';
 }
 """;
-    var result = generateCode(input);
+    var result = generateCodeForTest(input);
     expect(result, equals(DartFormatter().format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   var $ = StringBuffer();
@@ -113,7 +119,7 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
 </ul>''';
 }
 """;
-    var result = generateCode(input);
+    var result = generateCodeForTest(input);
     expect(result, equals(DartFormatter().format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   var $ = StringBuffer();
@@ -145,7 +151,8 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
 }
 """;
 
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
 
     expect(result, equals(DartFormatter().format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
@@ -178,7 +185,8 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
 }
 """;
 
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
 
     expect(result, equals(DartFormatter().format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
@@ -210,7 +218,8 @@ alb
 }
 """;
 
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
 
     expect(result, equals(DartFormatter().format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
@@ -246,7 +255,8 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
   'end';
 }
 """;
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
     expect(result, equals(DartFormatter().format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   var $ = StringBuffer();
@@ -283,7 +293,7 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
 <input type="text" [disabled]="$showMenu">''';
 }
 """;
-    var result = generateCode(input);
+    var result = generateCodeForTest(input);
     expect(result, equals(DartFormatter().format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   var $ = StringBuffer();
@@ -308,7 +318,7 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
 <a type="text" [classes]="${{'enabled': showMenu}}" [class.active]="${true}" [classes]="$data"></a>''';
 }
 """;
-    var result = generateCode(input);
+    var result = generateCodeForTest(input);
     expect(result, equals(DartFormatter().format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   var $ = StringBuffer();
@@ -334,7 +344,7 @@ void _myTemplate({bool showMenu}) =>
 <div>simple template $showMenu ${showMenu}</div>
   ''';
 """;
-    var result = generateCode(input);
+    var result = generateCodeForTest(input);
     expect(result, equals(DartFormatter().format(r"""
 TrustedHtml myTemplate({bool showMenu}) {
   var $ = StringBuffer();
@@ -355,7 +365,8 @@ _myTemplate() {
   '<img $attr=""><$tag open></$tag>';
 }
     ''';
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
     expect(result, equals(DartFormatter().format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
@@ -377,7 +388,8 @@ _myTemplate() {
   ''';
 }
     """;
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
     expect(result, equals(DartFormatter().format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
@@ -398,7 +410,8 @@ _myTemplate() {
   ''';
 }
     """;
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
     expect(result, equals(DartFormatter().format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
@@ -411,7 +424,6 @@ TrustedHtml myTemplate() {
 }    
 ''')));
   });
-
 
   test('Generate code with switch case', () {
     var input = r"""
@@ -428,7 +440,8 @@ _myTemplate() {
   ''';
 }
     """;
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
     expect(result, equals(DartFormatter().format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
@@ -478,7 +491,8 @@ _myTemplate() {
   ''';
 }
     """;
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
     expect(result, equals(DartFormatter().format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
@@ -514,7 +528,8 @@ _myTemplate() {
   ''';
 }
     """;
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
     expect(result, equals(DartFormatter().format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
@@ -547,12 +562,13 @@ _myTemplate() {
   ''';
 }
     """;
-    var result = generateCode(input, options: Options(skipWhitespaces: true));
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
     expect(result, equals(DartFormatter().format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
   
-  $.write('<!DOCTYPE html>');
+  $.writeln('<!DOCTYPE html>');
   $.write('<html language="${TrustedHtml.escape.attribute(Language.current.code)}">');
   $.write('<head>');
   $.write('<title>');
@@ -592,5 +608,4 @@ TrustedHtml myTemplate() {
     expect(() => extractInterpolation(r'true'),
         throwsA(TypeMatcher<GeneratorException>()));
   });
-
 }

@@ -1,11 +1,13 @@
-name: a_package
+name: example
+publish_to: 'none'
 
 environment:
-  sdk: '>=2.5.0 <3.0.0'
+  sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
   html_template:
-    path: ../../
+    path: ../
 
 dev_dependencies:
   build_runner:
+  test:

@@ -1,22 +1,22 @@
 name: html_template
 description: An HTML template engine based on String interpolation.
 version: 0.0.1
-author: Xavier Hainaux <xavier.hainaux@gmail.com>
+homepage: https://github.com/xvrh/html_template
 
 environment:
-  sdk: '>=2.5.0 <3.0.0'
+  sdk: '>=2.7.0 <3.0.0'
 
 dependencies:
-  meta: ^1.0.0
-  html: ^0.14.0
+  analyzer: ^0.40.0
   build:
-  source_gen:
-  analyzer: ^0.39.0
   dart_style:
+  html: ^0.14.0
+  meta: ^1.0.0
+  source_gen:
 
 dev_dependencies:
-  pedantic: ^1.8.0
-  test: ^1.6.0
-  build_test:
   build_runner:
+  build_test:
   build_web_compilers:
+  pedantic: ^1.9.0
+  test:

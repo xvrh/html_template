@@ -1,11 +1,12 @@
-import 'package:test/test.dart';
 import 'package:html_template/html_template.dart';
+import 'package:test/test.dart';
 
 part 'template_test.g.dart';
 
 // ignore_for_file: unused_element
+// ignore_for_file: unnecessary_statements
 
-main() {
+void main() {
   void eq(TrustedHtml templateResult, String expected) {
     expect(templateResult, equals(TrustedHtml(expected)));
   }
@@ -48,7 +49,8 @@ main() {
   test('Attributes', () {
     eq(attribute(disabled: true, isActive: true), '''
 <input disabled class="active">
-<span class="aa dis"></span>''');
+<span class="aa dis"></span>
+''');
     eq(
         attribute(
             disabled: false,
@@ -56,30 +58,31 @@ main() {
             classes: ['my-class', 'my-class', 'other']),
         '''
 <input class="my-class other active">
-<span class="aa"></span>''');
+<span class="aa"></span>
+''');
   });
 }
 
 @template
-_emptyTemplate() {}
+void _emptyTemplate() {}
 
 @template
-_simpleTemplate() {
+void _simpleTemplate() {
   '''<h1>Title</h1>''';
 }
 
 @template
-_condition({bool myVar = false}) {
+void _condition({bool myVar = false}) {
   '''<text *if="$myVar">True</text>''';
 }
 
 @template
-_interpolation(String someText) {
+void _interpolation(String someText) {
   '''-$someText-''';
 }
 
 @template
-_loop(Iterable<String> list) {
+void _loop(Iterable<String> list) {
   String item;
   '''<li *for="$item in $list">$item</li>''';
 }
@@ -87,7 +90,7 @@ _loop(Iterable<String> list) {
 enum MyEnum { one, two, three }
 
 @template
-_switchTemplate(MyEnum myEnum) {
+void _switchTemplate(MyEnum myEnum) {
   '''
 <div *switch="$myEnum">
   <span *case="${MyEnum.one}">One</span>
@@ -100,7 +103,7 @@ _switchTemplate(MyEnum myEnum) {
 }
 
 @template
-_attribute(
+void _attribute(
     {bool disabled = false, bool isActive = false, List<String> classes}) {
   '''
 <input [disabled]="$disabled" [class.active]="$isActive" [classes]="$classes">

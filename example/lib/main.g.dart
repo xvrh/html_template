@@ -20,12 +20,11 @@ TrustedHtml productTemplate(Product product) {
   $.write('</h1>');
   $.write('\n  ');
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 
-@GenerateFor(_masterTemplate)
-TrustedHtml masterTemplate(
-    {@required TrustedHtml body, String title, List<String> scripts}) {
+@GenerateFor(_pageTemplate)
+TrustedHtml pageTemplate(Product product, {List<String> scripts}) {
   var $ = StringBuffer();
 
   String script;
@@ -35,11 +34,11 @@ TrustedHtml masterTemplate(
   $.write('<head>');
   $.write('\n    ');
   $.write('<title>');
-  $.write('${TrustedHtml.escape(title)} - My site');
+  $.write('${TrustedHtml.escape(product.name)} - My site');
   $.write('</title>');
   $.write('\n    ');
   for (script in scripts ?? const []) {
-    $.write('<script async="">');
+    $.write('<script src="${TrustedHtml.escape.attribute(script)}" async="">');
     $.write('</script>');
   }
   $.write('\n  ');
@@ -47,12 +46,12 @@ TrustedHtml masterTemplate(
   $.write('\n  ');
   $.write('<body>');
   $.write('''
-    ${TrustedHtml.escape(body)}
+    ${TrustedHtml.escape(productTemplate(product))}
   
 
   ''');
   $.write('</body>');
   $.write('</html>');
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }

@@ -6,8 +6,8 @@ part of 'switch.dart';
 // TemplateGenerator
 // **************************************************************************
 
-@GenerateFor(_myTemplate)
-TrustedHtml myTemplate(Season season) {
+@GenerateFor(_switchExample)
+TrustedHtml switchExample(Season season) {
   var $ = StringBuffer();
 
   $.write('<div>');
@@ -24,12 +24,12 @@ TrustedHtml myTemplate(Season season) {
       break;
     default:
       $.write('<div>');
-      $.write('Neutral');
+      $.write('Pleasant');
       $.write('</div>');
       break;
   }
   $.write('</div>');
   $.write('\n  ');
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
