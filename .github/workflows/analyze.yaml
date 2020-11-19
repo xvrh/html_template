@@ -1,4 +1,4 @@
-name: analyze
+name: Analyze code
 on:
   pull_request:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   analyze_and_test:
-    name: Analyse and test
+    name: Analyse
     runs-on: ubuntu-latest
     container:
       image:  google/dart:latest
