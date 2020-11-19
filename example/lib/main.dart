@@ -1,5 +1,4 @@
 import 'package:html_template/html_template.dart';
-import 'package:meta/meta.dart';
 import 'package:shelf/shelf.dart';
 
 part 'main.g.dart';

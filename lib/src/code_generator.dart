@@ -190,7 +190,7 @@ class _InterpolationEscaper extends ToSourceVisitor {
     var original = StringBuffer();
     node.expression.accept(ToSourceVisitor(original));
 
-    var alias = '@@escapehtml${_index++}%%';
+    var alias = 'escapehtmltag${_index++}thisstringcannothappeninrealcode';
 
     stringReplacements[alias] = original.toString();
     sink.write(alias);
