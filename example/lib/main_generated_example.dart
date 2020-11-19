@@ -1,5 +1,4 @@
 import 'package:html_template/html_template.dart';
-import 'package:meta/meta.dart';
 import 'main.dart';
 
 // ignore_for_file: unnecessary_statements

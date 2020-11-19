@@ -1,4 +1,4 @@
-name: html_template
+name: analyze
 on:
   pull_request:
   push:

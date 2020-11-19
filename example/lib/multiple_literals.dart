@@ -33,4 +33,4 @@ class Data2 {
 
 Data2 buildPage() => Data2();
 
-Future<List<Data>> fetchData() => null;
+Future<List<Data>> fetchData() async => null;

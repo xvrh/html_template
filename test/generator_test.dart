@@ -76,7 +76,7 @@ TrustedHtml myTemplate({bool showMenu}) {
   $.write('</div>');
   $.write('\n  ');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 """)));
   });
@@ -105,7 +105,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   $.write('\n');
   $.write('</ul>');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 """)));
   });
@@ -134,7 +134,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   $.write('\n');
   $.write('</ul>');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 """)));
   });
@@ -170,7 +170,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   }
   $.write('</ul>');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 """)));
   });
@@ -202,7 +202,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   }
   $.write('</ul>');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 """)));
   });
@@ -232,7 +232,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   }
   $.write('bla');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 """)));
   });
@@ -280,7 +280,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   }
   $.write('end');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 """)));
   });
@@ -304,7 +304,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   $.write('\n');
   $.write('<input type="text"${template.attributeIf('disabled', showMenu)}>');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 """)));
   });
@@ -332,7 +332,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   $.write('<a type="text"${template.classAttribute({'enabled': showMenu}, {'active': true})}>');
   $.write('</a>');
 
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 """)));
   });
@@ -354,7 +354,7 @@ TrustedHtml myTemplate({bool showMenu}) {
   $.write('</div>');
   $.write('\n  ');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }
 """)));
   });
@@ -375,7 +375,7 @@ TrustedHtml myTemplate() {
   $.write('<${tag} open="">');
   $.write('</${tag}>');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }    
 ''')));
   });
@@ -397,7 +397,7 @@ TrustedHtml myTemplate() {
   $.write('<img src="${TrustedHtml.escape.attribute(item.url)}">');
   $.write('<img src="${TrustedHtml.escape.attribute(item)}" alt="${TrustedHtml.escape.attribute(myVar)}" alt2="${TrustedHtml.escape.attribute(myVar)}" alt3="ab${TrustedHtml.escape.attribute(myVar)}cd${TrustedHtml.escape.attribute(var2)}" alt4="${TrustedHtml.escape.attribute(myVar)}">');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }    
 ''')));
   });
@@ -420,7 +420,7 @@ TrustedHtml myTemplate() {
   $.write('\'My Title\'');
   $.write('</h1>');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }    
 ''')));
   });
@@ -471,7 +471,7 @@ TrustedHtml myTemplate() {
   }
   $.write('</div>');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }    
 ''')));
   });
@@ -514,7 +514,7 @@ TrustedHtml myTemplate() {
       break;
   }
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }    
 ''')));
   });
@@ -541,7 +541,7 @@ TrustedHtml myTemplate() {
   $.write('${TrustedHtml.escape('<div>')}');
   $.write('</div>');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }    
 ''')));
   });
@@ -582,7 +582,7 @@ TrustedHtml myTemplate() {
   $.write('</body>');
   $.write('</html>');
   
-  return TrustedHtml('${$}');
+  return TrustedHtml($.toString());
 }    
 ''')));
   });
