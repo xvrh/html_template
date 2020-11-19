@@ -6,32 +6,26 @@ part of 'multiple_literals.dart';
 // TemplateGenerator
 // **************************************************************************
 
-@GenerateFor(_myTemplate)
-Future<TrustedHtml> myTemplate() async {
+@GenerateFor(_movieTemplate)
+Future<TrustedHtml> movieTemplate() async {
   var $ = StringBuffer();
 
   $.write('<h1>');
-  $.write('Title');
+  $.write('My movies');
   $.write('</h1>');
-  var myPage = buildPage();
-  if (!myPage.hasData) {
+  var page = await fetchPage();
+  if (!page.isLoggedIn) {
     $.write('<h2>');
-    $.write('Sub title');
+    $.write('Log in');
     $.write('</h2>');
   } else {
-    var data = await fetchData();
-    Data item;
-    $.write('    ');
     $.write('<ul>');
-    $.write('\n      ');
-    for (item in data ?? const []) {
-      $.write('<li>');
-      $.write('${TrustedHtml.escape(item)}');
+    $.write('</ul>');
+    for (var movie in page.myMovies) {
+      $.write('<li${template.classAttribute({'favorite': movie.isFavorite})}>');
+      $.write('${TrustedHtml.escape(movie)}');
       $.write('</li>');
     }
-    $.write('\n    ');
-    $.write('</ul>');
-    $.write('\n    ');
   }
   $.write('<footer>');
   $.write('Footer');

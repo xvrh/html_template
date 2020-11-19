@@ -52,9 +52,9 @@ import 'example/lib/loop.dart#loop';
 ```
 
 Notice that we have to define the `item` variable outside of the string literal.   
-This is a bit unfortunate but string literals don't allow to define a variable inside them).
+This is a bit unfortunate but string literals don't allow to define a variable inside them.
 
-You can also write a loop with several string literals:
+Alternatively, we can write the loop in Dart arround the string literals:
 ```dart
 import 'example/lib/loop.dart#loop_alt';
 ```
@@ -85,4 +85,8 @@ import 'example/lib/nested.dart#nested';
 ```
 
 ### Others
-Use `<text *if="..">xx</text>` tag if you want to output some text without the html element wrapper.
+- Use `<text *if="..">xx</text>` tag if you want to output some text without the html element wrapper.
+
+- Use this comment in your dart file to workaround linter warnings
+
+      // ignore_for_file: unnecessary_statements

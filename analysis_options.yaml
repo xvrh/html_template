@@ -38,4 +38,3 @@ linter:
     unnecessary_statements: true
     use_function_type_syntax_for_parameters: true
     void_checks: true
-

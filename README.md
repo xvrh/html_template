@@ -129,9 +129,9 @@ void _simpleLoop(List<MenuItem> menu) {
 ```
 
 Notice that we have to define the `item` variable outside of the string literal.   
-This is a bit unfortunate but string literals don't allow to define a variable inside them).
+This is a bit unfortunate but string literals don't allow to define a variable inside them.
 
-You can also write a loop with several string literals:
+Alternatively, we can write the loop in Dart arround the string literals:
 ```dart
 @template
 void _alternativeLoop(List<MenuItem> menu) {
@@ -176,20 +176,18 @@ You can have has many strings literal as you want.
 
 ```dart
 @template
-void _myTemplate() async {
-  '<h1>Title</h1>';
+void _movieTemplate() async {
+  '<h1>My movies</h1>';
 
-  var myPage = buildPage();
-  if (!myPage.hasData) {
-    '<h2>Sub title</h2>';
+  var page = await fetchPage();
+  if (!page.isLoggedIn) {
+    '<h2>Log in</h2>';
   } else {
-    var data = await fetchData();
-    Data item;
-    '''
-    <ul>
-      <li *for="$item in $data">$item</li>
-    </ul>
-    ''';
+    '<ul>';
+    for (var movie in page.myMovies) {
+      '<li [class.favorite]="${movie.isFavorite}">$movie</li>';
+    }
+    '</ul>';
   }
   '<footer>Footer</footer>';
 }
@@ -214,4 +212,8 @@ void _img(String url) {
 ```
 
 ### Others
-Use `<text *if="..">xx</text>` tag if you want to output some text without the html element wrapper.
+- Use `<text *if="..">xx</text>` tag if you want to output some text without the html element wrapper.
+
+- Use this comment in your dart file to workaround linter warnings
+
+      // ignore_for_file: unnecessary_statements

@@ -6,31 +6,32 @@ part 'multiple_literals.g.dart';
 
 //---complex
 @template
-void _myTemplate() async {
-  '<h1>Title</h1>';
+void _movieTemplate() async {
+  '<h1>My movies</h1>';
 
-  var myPage = buildPage();
-  if (!myPage.hasData) {
-    '<h2>Sub title</h2>';
+  var page = await fetchPage();
+  if (!page.isLoggedIn) {
+    '<h2>Log in</h2>';
   } else {
-    var data = await fetchData();
-    Data item;
-    '''
-    <ul>
-      <li *for="$item in $data">$item</li>
-    </ul>
-    ''';
+    '<ul>';
+    for (var movie in page.myMovies) {
+      '<li [class.favorite]="${movie.isFavorite}">$movie</li>';
+    }
+    '</ul>';
   }
   '<footer>Footer</footer>';
 }
 //----
 
-class Data {}
-
-class Data2 {
-  bool get hasData => false;
+class Data {
+  bool get isFavorite => false;
 }
 
-Data2 buildPage() => Data2();
+class Data2 {
+  bool get isLoggedIn => false;
+  List<Data> get myMovies => null;
+}
+
+Future<Data2> fetchPage() async => Data2();
 
 Future<List<Data>> fetchData() async => null;
