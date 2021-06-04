@@ -3,7 +3,7 @@ import 'package:html_template/src/code_generator.dart';
 import 'package:html_template/src/interpolation.dart';
 import 'package:test/test.dart';
 
-String generateCodeForTest(String input, {Options options}) {
+String generateCodeForTest(String input, {Options? options}) {
   options ??= Options();
   return generateCode(input,
       options: options.copyWith(addGenerateForAttribute: false));

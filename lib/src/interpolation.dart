@@ -8,5 +8,5 @@ String extractInterpolation(String code) {
   if (match == null) {
     throw GeneratorException('Invalid interpolation: $code');
   }
-  return match.group(1) ?? match.group(2);
+  return match.group(1) ?? match.group(2) ?? '';
 }

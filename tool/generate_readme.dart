@@ -17,7 +17,7 @@ String generateReadme(File source) {
   var template = source.readAsStringSync();
 
   var readme = template.replaceAllMapped(_importRegex, (match) {
-    var filePath = match.group(1);
+    var filePath = match.group(1)!;
 
     var splitPath = filePath.split('#');
 

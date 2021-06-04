@@ -6,7 +6,7 @@ part 'css_classes.g.dart';
 
 //---classes
 @template
-void _cssClassesExample(List<Data> data, {bool showMenu}) {
+void _cssClassesExample(List<Data> data, {bool showMenu = false}) {
   // Add classes based on condition
   '<li [class.active]="$showMenu" [class.enabled]="${data.isNotEmpty}">Actif</li>';
 
@@ -17,5 +17,5 @@ void _cssClassesExample(List<Data> data, {bool showMenu}) {
 //----
 
 class Data {
-  String name;
+  String name = '';
 }

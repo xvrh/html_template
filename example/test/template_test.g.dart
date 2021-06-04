@@ -25,7 +25,7 @@ TrustedHtml simpleTemplate() {
 }
 
 @GenerateFor(_condition)
-TrustedHtml condition({bool myVar = false}) {
+TrustedHtml condition({bool? myVar = false}) {
   var $ = StringBuffer();
 
   if (myVar ?? false) {
@@ -45,7 +45,7 @@ TrustedHtml interpolation(String someText) {
 }
 
 @GenerateFor(_loop)
-TrustedHtml loop(Iterable<String> list) {
+TrustedHtml loop(Iterable<String>? list) {
   var $ = StringBuffer();
 
   String item;
@@ -92,13 +92,13 @@ TrustedHtml switchTemplate(MyEnum myEnum) {
 
 @GenerateFor(_attribute)
 TrustedHtml attribute(
-    {bool disabled = false, bool isActive = false, List<String> classes}) {
+    {bool disabled = false, bool isActive = false, List<String>? classes}) {
   var $ = StringBuffer();
 
   $.write(
       '<input${template.attributeIf('disabled', disabled)}${template.classAttribute(classes, {
-    'active': isActive
-  })}>');
+        'active': isActive
+      })}>');
   $.write('\n');
   $.write(
       '<span${template.classAttribute({'aa': isActive, 'dis': disabled})}>');

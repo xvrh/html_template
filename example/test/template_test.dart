@@ -83,14 +83,14 @@ void _interpolation(String someText) {
 
 @template
 void _loop(Iterable<String> list) {
-  String item;
+  var item = '';
   '''<li *for="$item in $list">$item</li>''';
 }
 
 enum MyEnum { one, two, three }
 
 @template
-void _switchTemplate(MyEnum myEnum) {
+void _switchTemplate(MyEnum? myEnum) {
   '''
 <div *switch="$myEnum">
   <span *case="${MyEnum.one}">One</span>
@@ -104,7 +104,9 @@ void _switchTemplate(MyEnum myEnum) {
 
 @template
 void _attribute(
-    {bool disabled = false, bool isActive = false, List<String> classes}) {
+    {bool disabled = false,
+    bool isActive = false,
+    required List<String> classes}) {
   '''
 <input [disabled]="$disabled" [class.active]="$isActive" [classes]="$classes">
 <span [classes]="${{'aa': isActive, 'dis': disabled}}"></span>

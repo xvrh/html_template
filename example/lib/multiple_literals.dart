@@ -29,9 +29,9 @@ class Data {
 
 class Data2 {
   bool get isLoggedIn => false;
-  List<Data> get myMovies => null;
+  List<Data> get myMovies => [];
 }
 
 Future<Data2> fetchPage() async => Data2();
 
-Future<List<Data>> fetchData() async => null;
+Future<List<Data>> fetchData() async => [];
