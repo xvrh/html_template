@@ -6,6 +6,8 @@ part of 'template_test.dart';
 // TemplateGenerator
 // **************************************************************************
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_emptyTemplate)
 TrustedHtml emptyTemplate() {
   var $ = StringBuffer();
@@ -13,6 +15,8 @@ TrustedHtml emptyTemplate() {
   return TrustedHtml($.toString());
 }
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_simpleTemplate)
 TrustedHtml simpleTemplate() {
   var $ = StringBuffer();
@@ -24,19 +28,23 @@ TrustedHtml simpleTemplate() {
   return TrustedHtml($.toString());
 }
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_condition)
-TrustedHtml condition({bool myVar = false}) {
+TrustedHtml condition({bool? myVar = false}) {
   var $ = StringBuffer();
 
-  if (myVar ?? false) {
+  if (template.nonNullBool(myVar)) {
     $.write('True');
   }
 
   return TrustedHtml($.toString());
 }
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_interpolation)
-TrustedHtml interpolation(String someText) {
+TrustedHtml interpolation(String? someText) {
   var $ = StringBuffer();
 
   $.write('-${TrustedHtml.escape(someText)}-');
@@ -44,12 +52,14 @@ TrustedHtml interpolation(String someText) {
   return TrustedHtml($.toString());
 }
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_loop)
-TrustedHtml loop(Iterable<String> list) {
+TrustedHtml loop(Iterable<String>? list) {
   var $ = StringBuffer();
 
-  String item;
-  for (item in list ?? const []) {
+  var item = '';
+  for (var item in template.nonNullIterable(list)) {
     $.write('<li>');
     $.write('${TrustedHtml.escape(item)}');
     $.write('</li>');
@@ -58,8 +68,10 @@ TrustedHtml loop(Iterable<String> list) {
   return TrustedHtml($.toString());
 }
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_switchTemplate)
-TrustedHtml switchTemplate(MyEnum myEnum) {
+TrustedHtml switchTemplate(MyEnum? myEnum) {
   var $ = StringBuffer();
 
   $.write('<div>');
@@ -90,15 +102,17 @@ TrustedHtml switchTemplate(MyEnum myEnum) {
   return TrustedHtml($.toString());
 }
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_attribute)
 TrustedHtml attribute(
-    {bool disabled = false, bool isActive = false, List<String> classes}) {
+    {bool disabled = false, bool isActive = false, List<String>? classes}) {
   var $ = StringBuffer();
 
   $.write(
       '<input${template.attributeIf('disabled', disabled)}${template.classAttribute(classes, {
-    'active': isActive
-  })}>');
+        'active': isActive
+      })}>');
   $.write('\n');
   $.write(
       '<span${template.classAttribute({'aa': isActive, 'dis': disabled})}>');

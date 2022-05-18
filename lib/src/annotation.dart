@@ -12,8 +12,8 @@ class TemplateAnnotation {
   }
 
   /// Build a class attribute
-  String classAttribute(Object class1,
-      [Object class2, Object class3, Object class4, Object class5]) {
+  String classAttribute(Object? class1,
+      [Object? class2, Object? class3, Object? class4, Object? class5]) {
     var classes = <String>{};
     for (var arg in [class1, class2, class3, class4, class5]) {
       if (arg != null) {
@@ -37,6 +37,10 @@ class TemplateAnnotation {
       return '';
     }
   }
+
+  Iterable<T> nonNullIterable<T>(Iterable<T>? iterable) => iterable ?? const [];
+
+  bool nonNullBool(bool? value) => value ?? false;
 }
 
 /// The annotation to put on a private method to activate the builder on it.
@@ -66,18 +70,18 @@ class _Escape {
   static const _attribute = HtmlEscape(HtmlEscapeMode.attribute);
   static const _sqAttribute = HtmlEscape(HtmlEscapeMode.sqAttribute);
 
-  String call(Object input) {
+  String call(Object? input) {
     if (input == null) return '';
     if (input is TrustedHtml) return '$input';
     return _element.convert('$input');
   }
 
-  String attribute(Object input) {
+  String attribute(Object? input) {
     if (input == null) return '';
     return _Escape._attribute.convert('$input');
   }
 
-  String attributeSingleQuote(Object input) {
+  String attributeSingleQuote(Object? input) {
     if (input == null) return '';
     return _Escape._sqAttribute.convert('$input');
   }

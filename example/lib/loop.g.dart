@@ -6,15 +6,17 @@ part of 'loop.dart';
 // TemplateGenerator
 // **************************************************************************
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_simpleLoop)
 TrustedHtml simpleLoop(List<MenuItem> menu) {
   var $ = StringBuffer();
 
-  MenuItem item;
+  MenuItem? item;
   $.write('  ');
   $.write('<ul>');
   $.write('\n    ');
-  for (item in menu ?? const []) {
+  for (var item in template.nonNullIterable(menu)) {
     $.write('<li>');
     $.write('''
       ${TrustedHtml.escape(item.title)}
@@ -28,6 +30,8 @@ TrustedHtml simpleLoop(List<MenuItem> menu) {
   return TrustedHtml($.toString());
 }
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_alternativeLoop)
 TrustedHtml alternativeLoop(List<MenuItem> menu) {
   var $ = StringBuffer();

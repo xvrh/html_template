@@ -14,9 +14,9 @@ jobs:
         dart: ['stable']
     runs-on: ${{matrix.os}}
     steps:
-      - uses: cedx/setup-dart@v2
+      - uses: dart-lang/setup-dart@v1
         with:
-          release-channel: ${{matrix.dart}}
+          sdk: ${{matrix.dart}}
       - uses: actions/checkout@v2
       - run: dart --version
       - run: dart pub get

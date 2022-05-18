@@ -6,7 +6,7 @@ part 'condition.g.dart';
 
 //---simple
 @template
-void _conditionExample({bool someCondition}) async {
+void _conditionExample({required bool someCondition}) async {
   '''  
   <!-- Conditionally include the <h2> tag -->
   <h2 *if="$someCondition">Condition on a tag</h2>
@@ -25,7 +25,7 @@ void _conditionExample({bool someCondition}) async {
 
 //---alt
 @template
-void _conditionAlt({bool showMenu}) {
+void _conditionAlt({required bool showMenu}) {
   '<h1>Title</h1>';
 
   if (!showMenu) {
@@ -34,4 +34,4 @@ void _conditionAlt({bool showMenu}) {
 }
 //---
 
-Future<String> fetchData() async => null;
+Future<String> fetchData() async => '';

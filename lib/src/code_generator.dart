@@ -2,6 +2,7 @@ import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/src/dart/ast/to_source_visitor.dart';
+import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:html/dom.dart' hide Comment;
 import 'package:html/dom.dart' as html;
@@ -14,11 +15,11 @@ class Options {
   final bool skipWhitespaces;
   final bool addGenerateForAttribute;
 
-  Options({bool skipWhitespaces, bool addGenerateForAttribute})
+  Options({bool? skipWhitespaces, bool? addGenerateForAttribute})
       : skipWhitespaces = skipWhitespaces ?? false,
         addGenerateForAttribute = addGenerateForAttribute ?? true;
 
-  Options copyWith({bool skipWhitespaces, bool addGenerateForAttribute}) =>
+  Options copyWith({bool? skipWhitespaces, bool? addGenerateForAttribute}) =>
       Options(
         skipWhitespaces: skipWhitespaces ?? this.skipWhitespaces,
         addGenerateForAttribute:
@@ -35,7 +36,7 @@ class GeneratorException implements Exception {
   String toString() => message;
 }
 
-String generateCode(String input, {Options options}) {
+String generateCode(String input, {Options? options}) {
   var parsed = parseString(content: input);
   if (parsed.errors.isNotEmpty) {
     throw Exception(parsed.errors.toString());
@@ -54,7 +55,7 @@ String generateCode(String input, {Options options}) {
 }
 
 String generateCodeFromFunction(FunctionDeclaration function,
-    {Options options}) {
+    {Options? options}) {
   options ??= Options();
   var code = StringBuffer();
 
@@ -73,8 +74,11 @@ String generateCodeFromFunction(FunctionDeclaration function,
   if (options.addGenerateForAttribute) {
     code.writeln('@GenerateFor(${function.name.name})');
   }
-  code.writeln(
-      '$returnType $functionName${function.functionExpression.parameters} '
+
+  var parametersCode = StringBuffer();
+  ToSourceVisitor(parametersCode)
+      .visitFormalParameterList(function.functionExpression.parameters!);
+  code.writeln('$returnType $functionName$parametersCode'
       '${function.functionExpression.body.isAsynchronous ? 'async' : ''} {');
   code.writeln(r'var $ = StringBuffer();');
   code.writeln('');
@@ -136,8 +140,7 @@ class _Printer extends ToSourceVisitor {
 
   @override
   void visitExpressionStatement(ExpressionStatement node) {
-    var replacement =
-        replacements.firstWhere((f) => f.source == node, orElse: () => null);
+    var replacement = replacements.firstWhereOrNull((f) => f.source == node);
     if (replacement != null) {
       sink.writeln(replacement.newCode);
     } else {
@@ -198,14 +201,14 @@ class _InterpolationEscaper extends ToSourceVisitor {
 }
 
 class _CodeWriter {
-  static final _hasNonWhitespace = RegExp(r'[^\s]');
+  static final _hasNonWhitespace = RegExp(r'\S');
   final stringReplacements = <String, String>{};
   final Options options;
   final output = StringBuffer();
 
   _CodeWriter(this.options);
 
-  void writeNode(Node node, {bool skipEmptyText}) {
+  void writeNode(Node node, {bool? skipEmptyText}) {
     if (node is Text) {
       _writeText(node, skipEmptyText: skipEmptyText);
     } else if (node is DocumentType) {
@@ -224,7 +227,7 @@ class _CodeWriter {
   }
 
   String _withInterpolation(String data,
-      {String Function(String) transformer}) {
+      {String Function(String)? transformer}) {
     for (var replacementEntry in stringReplacements.entries) {
       var replacement = replacementEntry.value;
       if (transformer != null) {
@@ -236,7 +239,7 @@ class _CodeWriter {
     return data;
   }
 
-  void _writeText(Text node, {bool skipEmptyText}) {
+  void _writeText(Text node, {bool? skipEmptyText}) {
     skipEmptyText ??= false;
 
     var shouldEscape = true;
@@ -277,7 +280,7 @@ class _CodeWriter {
 
   void _writeComment(html.Comment comment) {
     output.writeln(
-        "\$.writeln('''<!-- ${_withInterpolation(comment.data, transformer: (s) => 'TrustedHtml.escape($s)')} -->''');");
+        "\$.writeln('''<!-- ${_withInterpolation(comment.data ?? '', transformer: (s) => 'TrustedHtml.escape($s)')} -->''');");
   }
 
   void _writeDocumentType(DocumentType documentType) {
@@ -304,7 +307,7 @@ class _CodeWriter {
     var isText = element.localName == 'text';
 
     var open =
-        '<${_getSerializationPrefix(element.namespaceUri)}${_withInterpolation(element.localName)}${attributes.toCode()}>';
+        '<${_getSerializationPrefix(element.namespaceUri)}${_withInterpolation(element.localName ?? 'unknown')}${attributes.toCode()}>';
 
     Iterable<StructuralAttribute> structurals({bool enclose = true}) =>
         attributes.structurals.where((s) => s.encloseTag == enclose);
@@ -337,14 +340,15 @@ class _CodeWriter {
         .forEach((a) => output.writeln(a.closeStructure));
 
     if (!isText && !isVoidElement(element.localName)) {
-      output.write("\$.write('</${_withInterpolation(element.localName)}>');");
+      output.write(
+          "\$.write('</${_withInterpolation(element.localName ?? 'unknown')}>');");
     }
 
     structurals(enclose: true).forEach((a) => output.writeln(a.closeStructure));
   }
 }
 
-String _getSerializationPrefix(String uri) {
+String _getSerializationPrefix(String? uri) {
   if (uri == null ||
       uri == Namespaces.html ||
       uri == Namespaces.mathml ||

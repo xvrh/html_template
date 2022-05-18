@@ -19,11 +19,11 @@ void _productTemplate(Product product) {
 }
 
 @template
-void _pageTemplate(Product product, {List<String> scripts}) {
-  String script;
+void _pageTemplate(Product product, {List<String>? scripts}) {
+  var script = '';
+  '<!doctype html>';
   '''
-<!doctype html>
-<html language="${Language.current}">
+<html lang="${Language.current}">
   <head>
     <title>${product.name} - My site</title>
     <script *for="$script in $scripts" src="$script" async></script>
@@ -38,7 +38,7 @@ void _pageTemplate(Product product, {List<String> scripts}) {
 
 class Product {
   bool get isNew => false;
-  String get icon => '';
+  String? get icon => '';
   String get name => '';
 }
 
@@ -49,9 +49,9 @@ class Language {
 String escapeAttribute(String s) => '';
 String escapeHtml(String s) => '';
 
-final Router router = null;
-final Database database = null;
-Object params(dynamic request, dynamic id) => null;
+final Router router = Router();
+final Database database = Database();
+Object params(dynamic request, dynamic id) => '';
 //---- usage
 void main() {
   router.get('/products/<id>', (request) async {
@@ -66,9 +66,9 @@ void main() {
 //----
 
 class Router {
-  void get(String route, Future<void> Function(Object) callback) {}
+  void get(String route, Future<dynamic> Function(Object) callback) {}
 }
 
 class Database {
-  Future<Product> findProduct(Object o) async => null;
+  Future<Product> findProduct(Object o) async => Product();
 }

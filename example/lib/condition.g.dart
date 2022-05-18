@@ -6,14 +6,16 @@ part of 'condition.dart';
 // TemplateGenerator
 // **************************************************************************
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_conditionExample)
-Future<TrustedHtml> conditionExample({bool someCondition}) async {
+Future<TrustedHtml> conditionExample({required bool someCondition}) async {
   var $ = StringBuffer();
 
   $.write('  ');
   $.writeln('''<!--  Conditionally include the <h2> tag  -->''');
   $.write('\n  ');
-  if (someCondition ?? false) {
+  if (template.nonNullBool(someCondition)) {
     $.write('<h2>');
     $.write('Condition on a tag');
     $.write('</h2>');
@@ -30,7 +32,7 @@ Future<TrustedHtml> conditionExample({bool someCondition}) async {
   $.write('\n  \n    ');
   $.writeln('''<!--  Use any Dart expression for the condition  -->''');
   $.write('\n  ');
-  if ((await fetchData()).isEmpty ?? false) {
+  if (template.nonNullBool((await fetchData()).isEmpty)) {
     $.write('<hr>');
   }
   $.write('\n  ');
@@ -38,8 +40,10 @@ Future<TrustedHtml> conditionExample({bool someCondition}) async {
   return TrustedHtml($.toString());
 }
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_conditionAlt)
-TrustedHtml conditionAlt({bool showMenu}) {
+TrustedHtml conditionAlt({required bool showMenu}) {
   var $ = StringBuffer();
 
   $.write('<h1>');

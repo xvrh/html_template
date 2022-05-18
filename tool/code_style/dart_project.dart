@@ -20,7 +20,7 @@ List<DartProject> getDartProjects(String root) {
   return paths;
 }
 
-DartProject getContainingProject(String currentPath) {
+DartProject? getContainingProject(String currentPath) {
   var dir = Directory(currentPath);
 
   while (true) {
@@ -41,7 +41,7 @@ DartProject getContainingProject(String currentPath) {
 List<DartProject> getSubOrContainingProjects(String root) {
   var projects = getDartProjects(root);
   if (projects.isEmpty) {
-    var containingProject = getContainingProject(root);
+    var containingProject = getContainingProject(root)!;
     return [containingProject];
   } else {
     return projects;
@@ -53,10 +53,10 @@ bool isInHiddenDir(String relative) =>
 
 class DartProject {
   final String rootDirectory;
-  String _listingPath;
-  String _packageName;
+  late final String _listingPath;
+  late final String _packageName;
 
-  DartProject(this.rootDirectory, {String listingPath}) {
+  DartProject(this.rootDirectory, {String? listingPath}) {
     _packageName = _getPackageName(rootDirectory);
 
     _listingPath = listingPath ?? rootDirectory;
@@ -107,11 +107,11 @@ class DartProject {
 class DartFile {
   final DartProject project;
   final File file;
-  String _relativePath;
+  final String _relativePath;
 
-  DartFile(this.project, this.file) {
-    _relativePath = p.relative(file.absolute.path, from: project.rootDirectory);
-  }
+  DartFile(this.project, this.file)
+      : _relativePath =
+            p.relative(file.absolute.path, from: project.rootDirectory);
 
   String get path => file.path;
 

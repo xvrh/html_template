@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'code_generator.dart' show GeneratorException;
 import 'interpolation.dart';
 
@@ -23,7 +22,7 @@ class Attributes {
   final structurals = <StructuralAttribute>[];
 
   Attributes(Map<Object, String> attributesFromElement,
-      {@required this.stringReplacements})
+      {required this.stringReplacements})
       : _attributes =
             attributesFromElement.map((k, v) => MapEntry(k.toString(), v)) {
     for (var attribute in _attributes.entries.toList()) {
@@ -31,7 +30,7 @@ class Attributes {
       var classMatch = _classAttributeExtractor.firstMatch(name);
       var attributeValue = _withInterpolation(attribute.value, escape: false);
       if (classMatch != null) {
-        _class[classMatch.group(1)] = extractInterpolation(attributeValue);
+        _class[classMatch.group(1)!] = extractInterpolation(attributeValue);
         _attributes.remove(name);
       } else if (name == '[classes]') {
         _classes.add(extractInterpolation(attributeValue));
@@ -46,7 +45,7 @@ class Attributes {
     }
   }
 
-  String _withInterpolation(String data, {@required bool escape}) {
+  String _withInterpolation(String data, {required bool escape}) {
     for (var replacementKey in stringReplacements.keys) {
       var replacement = stringReplacements[replacementKey];
       if (escape) {
@@ -105,7 +104,7 @@ class IfAttribute extends StructuralAttribute {
 
   @override
   String get openStructure {
-    return 'if ($condition ?? false) {';
+    return 'if (template.nonNullBool($condition)) {';
   }
 
   @override
@@ -113,10 +112,10 @@ class IfAttribute extends StructuralAttribute {
 }
 
 final _forExtractor =
-    RegExp(r'^\s*([^\s]+)\s+in\s+(.+)\s*$', caseSensitive: false);
+    RegExp(r'^\s*(\S+)\s+in\s+(.+)\s*$', caseSensitive: false);
 
 class ForAttribute extends StructuralAttribute {
-  String _item, _iterable;
+  late final String _item, _iterable;
 
   ForAttribute(String attributeValue) {
     var extracted = _forExtractor.firstMatch(attributeValue);
@@ -124,13 +123,13 @@ class ForAttribute extends StructuralAttribute {
       throw GeneratorException(
           r'*for attributes must be in the format: *for="$item in $iterable"');
     }
-    _item = extractInterpolation(extracted.group(1));
-    _iterable = extractInterpolation(extracted.group(2));
+    _item = removeBang(extractInterpolation(extracted.group(1)!));
+    _iterable = extractInterpolation(extracted.group(2)!);
   }
 
   @override
   String get openStructure {
-    return 'for ($_item in $_iterable ?? const []) {';
+    return 'for (var $_item in template.nonNullIterable($_iterable)) {';
   }
 
   @override
@@ -153,7 +152,7 @@ class SwitchAttribute extends StructuralAttribute {
 }
 
 class CaseAttribute extends StructuralAttribute {
-  String _matcher;
+  late final String _matcher;
 
   CaseAttribute(String value) {
     try {

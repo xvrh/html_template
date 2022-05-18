@@ -32,11 +32,11 @@ void _productTemplate(Product product) {
 }
 
 @template
-void _pageTemplate(Product product, {List<String> scripts}) {
-  String script;
+void _pageTemplate(Product product, {List<String>? scripts}) {
+  var script = '';
+  '<!doctype html>';
   '''
-<!doctype html>
-<html language="${Language.current}">
+<html lang="${Language.current}">
   <head>
     <title>${product.name} - My site</title>
     <script *for="$script in $scripts" src="$script" async></script>
@@ -94,7 +94,7 @@ void main() {
 ### Conditions
 ```dart
 @template
-void _conditionExample({bool someCondition}) async {
+void _conditionExample({required bool someCondition}) async {
   '''  
   <!-- Conditionally include the <h2> tag -->
   <h2 *if="$someCondition">Condition on a tag</h2>
@@ -117,10 +117,10 @@ To repeat an HTML element, use the attribute: `*for="$item in $iterable"`.
 ```dart
 @template
 void _simpleLoop(List<MenuItem> menu) {
-  MenuItem item;
+  MenuItem? item;
   '''
   <ul>
-    <li *for="$item in $menu">
+    <li *for="${item!} in $menu">
       ${item.title}
     </li>
   </ul>
@@ -160,7 +160,7 @@ void _switchExample(Season season) {
 ### CSS Classes
 ```dart
 @template
-void _cssClassesExample(List<Data> data, {bool showMenu}) {
+void _cssClassesExample(List<Data> data, {bool showMenu = false}) {
   // Add classes based on condition
   '<li [class.active]="$showMenu" [class.enabled]="${data.isNotEmpty}">Actif</li>';
 

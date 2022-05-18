@@ -7,10 +7,10 @@ part 'loop.g.dart';
 //---loop
 @template
 void _simpleLoop(List<MenuItem> menu) {
-  MenuItem item;
+  MenuItem? item;
   '''
   <ul>
-    <li *for="$item in $menu">
+    <li *for="${item!} in $menu">
       ${item.title}
     </li>
   </ul>

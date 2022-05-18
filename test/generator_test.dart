@@ -3,7 +3,7 @@ import 'package:html_template/src/code_generator.dart';
 import 'package:html_template/src/interpolation.dart';
 import 'package:test/test.dart';
 
-String generateCodeForTest(String input, {Options options}) {
+String generateCodeForTest(String input, {Options? options}) {
   options ??= Options();
   return generateCode(input,
       options: options.copyWith(addGenerateForAttribute: false));
@@ -11,38 +11,40 @@ String generateCodeForTest(String input, {Options options}) {
 
 void main() {
   test('Convert function signature with void', () {
-    var input = r'void _myTemplate({bool showMenu}) {}';
+    var input = r'void _myTemplate({required bool showMenu}) {}';
     expect(generateCodeForTest(input),
-        startsWith(r'TrustedHtml myTemplate({bool showMenu}) {'));
+        startsWith(r'TrustedHtml myTemplate({required bool showMenu}) {'));
   });
 
   test('Convert function signature with Future', () {
-    var input = r'Future _myTemplate({bool showMenu}) {}';
+    var input = r'Future _myTemplate({bool? showMenu}) {}';
     expect(generateCodeForTest(input),
-        startsWith(r'Future<TrustedHtml> myTemplate({bool showMenu}) {'));
+        startsWith(r'Future<TrustedHtml> myTemplate({bool? showMenu}) {'));
   });
 
   test('Convert function signature with Future<void>', () {
-    var input = r'Future<void> _myTemplate({bool showMenu}) {}';
+    var input = r'Future<void> _myTemplate({bool? showMenu}) {}';
     expect(generateCodeForTest(input),
-        startsWith(r'Future<TrustedHtml> myTemplate({bool showMenu}) {'));
+        startsWith(r'Future<TrustedHtml> myTemplate({bool? showMenu}) {'));
   });
 
   test('Convert function signature with empty async', () {
-    var input = r'_myTemplate({bool showMenu}) async {}';
-    expect(generateCodeForTest(input),
-        startsWith(r'Future<TrustedHtml> myTemplate({bool showMenu}) async {'));
+    var input = r'_myTemplate({bool? showMenu}) async {}';
+    expect(
+        generateCodeForTest(input),
+        startsWith(
+            r'Future<TrustedHtml> myTemplate({bool? showMenu}) async {'));
   });
 
   test('Convert function signature with empty not async', () {
-    var input = r'_myTemplate({bool showMenu}) {}';
+    var input = r'_myTemplate({bool? showMenu}) {}';
     expect(generateCodeForTest(input),
-        startsWith(r'TrustedHtml myTemplate({bool showMenu}) {'));
+        startsWith(r'TrustedHtml myTemplate({bool? showMenu}) {'));
   });
 
   test('Generate code from template function', () {
     var input = r"""
-void _myTemplate({bool showMenu}) {
+void _myTemplate({bool? showMenu}) {
   var data = getData();
   String format(int i) => i.toString();
 
@@ -60,14 +62,14 @@ void _myTemplate({bool showMenu}) {
     var result = generateCodeForTest(input);
 
     expect(result, equals(DartFormatter().format(r"""
-TrustedHtml myTemplate({bool showMenu}) {
+TrustedHtml myTemplate({bool? showMenu}) {
   var $ = StringBuffer();
   
   var data = getData();
   String format(int i) => i.toString();
   $.write('<div>');
   $.write('\n  ');
-  if (showMenu ?? false) {
+  if (template.nonNullBool(showMenu)) {
     $.write('<ul>');
     $.write('\n  \n  ');
     $.write('</ul>');
@@ -83,7 +85,7 @@ TrustedHtml myTemplate({bool showMenu}) {
 
   test('Generate code with loop', () {
     var input = r"""
-void _myTemplate(List<Data> data, {bool showMenu}) {
+void _myTemplate(List<Data> data, {required bool showMenu}) {
   '''
 <ul>
 <li *for="$item in $data">$item</li>
@@ -92,12 +94,12 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
 """;
     var result = generateCodeForTest(input);
     expect(result, equals(DartFormatter().format(r"""
-TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
+TrustedHtml myTemplate(List<Data> data, {required bool showMenu}) {
   var $ = StringBuffer();
   
   $.write('<ul>');
   $.write('\n');
-  for (item in data ?? const []) {
+  for (var item in template.nonNullIterable(data)) {
     $.write('<li>');
     $.write('${TrustedHtml.escape(item)}');
     $.write('</li>');
@@ -112,7 +114,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
 
   test('Generate code with complex loop', () {
     var input = r"""
-void _myTemplate(List<Data> data, {bool showMenu}) {
+void _myTemplate(List<Data> data, {bool? showMenu}) {
   '''
 <ul>
 <li *for="$item in ${menu.breadcrumb.takeWhile((e) => e != lastBreadcrumb)}">$item</li>
@@ -121,12 +123,12 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
 """;
     var result = generateCodeForTest(input);
     expect(result, equals(DartFormatter().format(r"""
-TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
+TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
   var $ = StringBuffer();
   
   $.write('<ul>');
   $.write('\n');
-  for (item in menu.breadcrumb.takeWhile((e) => e != lastBreadcrumb) ?? const []) {
+  for (var item in template.nonNullIterable(menu.breadcrumb.takeWhile((e) => e != lastBreadcrumb))) {
     $.write('<li>');
     $.write('${TrustedHtml.escape(item)}');
     $.write('</li>');
@@ -141,7 +143,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
 
   test('Generate code with multi loop', () {
     var input = r"""
-void _myTemplate(List<Data> data, {bool showMenu}) {
+void _myTemplate(List<Data>? data, {bool? showMenu}) {
   '''
 <ul>
 <li *for="$item in $data">
@@ -155,13 +157,13 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
         generateCodeForTest(input, options: Options(skipWhitespaces: true));
 
     expect(result, equals(DartFormatter().format(r"""
-TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
+TrustedHtml myTemplate(List<Data>? data, {bool? showMenu}) {
   var $ = StringBuffer();
   
   $.write('<ul>');
-  for (item in data ?? const []) {
+  for (var item in template.nonNullIterable(data)) {
     $.write('<li>');
-    for (e in item.subData ?? const []) {
+    for (var e in template.nonNullIterable(item.subData)) {
       $.write('<a>');
       $.write('${TrustedHtml.escape(e.title)}');
       $.write('</a>');
@@ -177,7 +179,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
 
   test('Generate loop and if in the same tag', () {
     var input = r"""
-void _myTemplate(List<Data> data, {bool showMenu}) {
+void _myTemplate(List<Data> data, {required bool showMenu}) {
   '''
 <ul>
 <li *if="$showMenu" *for="$item in $data">$item</li>
@@ -189,12 +191,12 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
         generateCodeForTest(input, options: Options(skipWhitespaces: true));
 
     expect(result, equals(DartFormatter().format(r"""
-TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
+TrustedHtml myTemplate(List<Data> data, {required bool showMenu}) {
   var $ = StringBuffer();
   
   $.write('<ul>');
-  if (showMenu ?? false) {
-    for (item in data ?? const []) {
+  if (template.nonNullBool(showMenu)) {
+    for (var item in template.nonNullIterable(data)) {
       $.write('<li>');
       $.write('${TrustedHtml.escape(item)}');
       $.write('</li>');
@@ -209,7 +211,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
 
   test('Never output text tag', () {
     var input = r"""
-void _myTemplate(List<Data> data, {bool showMenu}) {
+void _myTemplate(List<Data> data, {bool? showMenu}) {
   '''
 alb
 <text *if="$showMenu">$item</text>
@@ -222,12 +224,12 @@ alb
         generateCodeForTest(input, options: Options(skipWhitespaces: true));
 
     expect(result, equals(DartFormatter().format(r"""
-TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
+TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
   var $ = StringBuffer();
   
   $.write('''alb
 ''');
-  if (showMenu ?? false) {
+  if (template.nonNullBool(showMenu)) {
     $.write('${TrustedHtml.escape(item)}');
   }
   $.write('bla');
@@ -239,7 +241,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
 
   test('Allow multiple string literals', () {
     var input = r"""
-void _myTemplate(List<Data> data, {bool showMenu}) {
+void _myTemplate(List<Data> data, {bool? showMenu}) {
   '''<h1>H</h1>''';
 
   if (showMenu) {
@@ -258,7 +260,7 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
     var result =
         generateCodeForTest(input, options: Options(skipWhitespaces: true));
     expect(result, equals(DartFormatter().format(r"""
-TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
+TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
   var $ = StringBuffer();
   
   $.write('<h1>');
@@ -271,7 +273,7 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   } else {
     Data item;
     $.write('<ul>');
-    for (item in data ?? const []) {
+    for (var item in template.nonNullIterable(data)) {
       $.write('<li>');
       $.write('${TrustedHtml.escape(item)}');
       $.write('</li>');
