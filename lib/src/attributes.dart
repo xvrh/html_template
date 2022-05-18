@@ -104,7 +104,7 @@ class IfAttribute extends StructuralAttribute {
 
   @override
   String get openStructure {
-    return 'if ($condition ?? false) {';
+    return 'if (template.nonNullBool($condition)) {';
   }
 
   @override
@@ -112,7 +112,7 @@ class IfAttribute extends StructuralAttribute {
 }
 
 final _forExtractor =
-    RegExp(r'^\s*([^\s]+)\s+in\s+(.+)\s*$', caseSensitive: false);
+    RegExp(r'^\s*(\S+)\s+in\s+(.+)\s*$', caseSensitive: false);
 
 class ForAttribute extends StructuralAttribute {
   late final String _item, _iterable;
@@ -123,13 +123,13 @@ class ForAttribute extends StructuralAttribute {
       throw GeneratorException(
           r'*for attributes must be in the format: *for="$item in $iterable"');
     }
-    _item = extractInterpolation(extracted.group(1)!);
+    _item = removeBang(extractInterpolation(extracted.group(1)!));
     _iterable = extractInterpolation(extracted.group(2)!);
   }
 
   @override
   String get openStructure {
-    return 'for ($_item in $_iterable ?? const []) {';
+    return 'for (var $_item in template.nonNullIterable($_iterable)) {';
   }
 
   @override

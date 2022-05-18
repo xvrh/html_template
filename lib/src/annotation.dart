@@ -37,6 +37,10 @@ class TemplateAnnotation {
       return '';
     }
   }
+
+  Iterable<T> nonNullIterable<T>(Iterable<T>? iterable) => iterable ?? const [];
+
+  bool nonNullBool(bool? value) => value ?? false;
 }
 
 /// The annotation to put on a private method to activate the builder on it.

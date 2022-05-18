@@ -10,12 +10,12 @@ jobs:
     name: Analyse
     runs-on: ubuntu-latest
     container:
-      image:  google/dart:latest
+      image:  dart:stable
     steps:
       - uses: actions/checkout@v2
       - run: dart --version
       - run: dart pub get && (cd example && dart pub get)
-      - run: dart analyze --fatal-warnings --fatal-infos
+      - run: dart analyze --fatal-infos
       - run: dart --enable-asserts tool/prepare_submit.dart
       - name: "check for uncommitted changes"
         run: git diff --exit-code --stat -- .

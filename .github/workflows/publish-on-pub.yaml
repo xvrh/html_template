@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: google/dart:2.10.4
+      image: dart:stable
     steps:
       - uses: actions/checkout@v2
       - run: dart pub get

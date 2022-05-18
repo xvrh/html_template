@@ -2,6 +2,7 @@ import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/src/dart/ast/to_source_visitor.dart';
+import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:html/dom.dart' hide Comment;
 import 'package:html/dom.dart' as html;
@@ -9,9 +10,6 @@ import 'package:html/dom_parsing.dart';
 import 'package:html/parser.dart';
 import 'package:html/src/constants.dart';
 import 'attributes.dart';
-import 'package:collection/collection.dart';
-
-import 'to_source_visitor.dart';
 
 class Options {
   final bool skipWhitespaces;
@@ -78,7 +76,7 @@ String generateCodeFromFunction(FunctionDeclaration function,
   }
 
   var parametersCode = StringBuffer();
-  ToSourceVisitor2(parametersCode)
+  ToSourceVisitor(parametersCode)
       .visitFormalParameterList(function.functionExpression.parameters!);
   code.writeln('$returnType $functionName$parametersCode'
       '${function.functionExpression.body.isAsynchronous ? 'async' : ''} {');
@@ -203,7 +201,7 @@ class _InterpolationEscaper extends ToSourceVisitor {
 }
 
 class _CodeWriter {
-  static final _hasNonWhitespace = RegExp(r'[^\s]');
+  static final _hasNonWhitespace = RegExp(r'\S');
   final stringReplacements = <String, String>{};
   final Options options;
   final output = StringBuffer();

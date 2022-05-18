@@ -19,11 +19,11 @@ void _productTemplate(Product product) {
 }
 
 @template
-void _pageTemplate(Product product, {required List<String> scripts}) {
+void _pageTemplate(Product product, {List<String>? scripts}) {
   var script = '';
+  '<!doctype html>';
   '''
-<!doctype html>
-<html language="${Language.current}">
+<html lang="${Language.current}">
   <head>
     <title>${product.name} - My site</title>
     <script *for="$script in $scripts" src="$script" async></script>
@@ -38,7 +38,7 @@ void _pageTemplate(Product product, {required List<String> scripts}) {
 
 class Product {
   bool get isNew => false;
-  String get icon => '';
+  String? get icon => '';
   String get name => '';
 }
 

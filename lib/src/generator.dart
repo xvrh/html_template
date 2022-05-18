@@ -23,7 +23,13 @@ class TemplateGenerator extends GeneratorForAnnotation<TemplateAnnotation> {
         functionName: element.name);
 
     try {
-      return generateCodeFromFunction(functionDeclaration);
+      var code = generateCodeFromFunction(functionDeclaration);
+      code = '''
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
+$code      
+''';
+      return code;
     } on GeneratorException catch (e) {
       throw InvalidGenerationSourceError(e.message, element: element);
     }

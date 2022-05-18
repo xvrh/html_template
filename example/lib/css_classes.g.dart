@@ -6,14 +6,16 @@ part of 'css_classes.dart';
 // TemplateGenerator
 // **************************************************************************
 
+// ignore_for_file: duplicate_ignore
+// ignore_for_file: unused_local_variable
 @GenerateFor(_cssClassesExample)
-TrustedHtml cssClassesExample(List<Data> data, {bool showMenu}) {
+TrustedHtml cssClassesExample(List<Data> data, {bool showMenu = false}) {
   var $ = StringBuffer();
 
   $.write('<li${template.classAttribute({
-    'active': showMenu,
-    'enabled': data.isNotEmpty
-  })}>');
+        'active': showMenu,
+        'enabled': data.isNotEmpty
+      })}>');
   $.write('Actif');
   $.write('</li>');
   var myClasses = {'enabled': showMenu};
