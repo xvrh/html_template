@@ -1,3 +1,7 @@
+## 0.2.1
+
+- Support latest version of dependencies
+
 ## 0.2.0
 
 - Support null-safety

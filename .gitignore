@@ -3,6 +3,8 @@ _*
 !.gitignore
 !.github
 
+pubspec.lock
+
 doc/api/
 *.iml
 build/
