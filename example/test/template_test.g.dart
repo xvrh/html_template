@@ -8,6 +8,7 @@ part of 'template_test.dart';
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_emptyTemplate)
 TrustedHtml emptyTemplate() {
   var $ = StringBuffer();
@@ -17,6 +18,7 @@ TrustedHtml emptyTemplate() {
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_simpleTemplate)
 TrustedHtml simpleTemplate() {
   var $ = StringBuffer();
@@ -30,6 +32,7 @@ TrustedHtml simpleTemplate() {
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_condition)
 TrustedHtml condition({bool? myVar = false}) {
   var $ = StringBuffer();
@@ -43,6 +46,7 @@ TrustedHtml condition({bool? myVar = false}) {
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_interpolation)
 TrustedHtml interpolation(String? someText) {
   var $ = StringBuffer();
@@ -54,6 +58,7 @@ TrustedHtml interpolation(String? someText) {
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_loop)
 TrustedHtml loop(Iterable<String>? list) {
   var $ = StringBuffer();
@@ -70,6 +75,7 @@ TrustedHtml loop(Iterable<String>? list) {
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_switchTemplate)
 TrustedHtml switchTemplate(MyEnum? myEnum) {
   var $ = StringBuffer();
@@ -104,6 +110,7 @@ TrustedHtml switchTemplate(MyEnum? myEnum) {
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_attribute)
 TrustedHtml attribute(
     {bool disabled = false, bool isActive = false, List<String>? classes}) {

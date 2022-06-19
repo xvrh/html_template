@@ -1,12 +1,14 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
+// ignore: implementation_imports
 import 'package:analyzer/src/dart/ast/to_source_visitor.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:html/dom.dart' hide Comment;
 import 'package:html/dom.dart' as html;
 import 'package:html/dom_parsing.dart';
 import 'package:html/parser.dart';
+// ignore: implementation_imports
 import 'package:html/src/constants.dart';
 import 'attributes.dart';
 import 'utils.dart';

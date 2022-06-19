@@ -8,6 +8,7 @@ part of 'main.dart';
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_productTemplate)
 TrustedHtml productTemplate(Product product) {
   var $ = StringBuffer();
@@ -27,6 +28,7 @@ TrustedHtml productTemplate(Product product) {
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_pageTemplate)
 TrustedHtml pageTemplate(Product product, {List<String>? scripts}) {
   var $ = StringBuffer();

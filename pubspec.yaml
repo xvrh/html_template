@@ -1,6 +1,6 @@
 name: html_template
 description: A server-side HTML template engine based on String interpolation.
-version: 0.2.1
+version: 0.2.2
 homepage: https://github.com/xvrh/html_template
 
 environment:
@@ -16,9 +16,9 @@ dependencies:
 
 dev_dependencies:
   build_runner:
-  build_test: ^2.0.0
-  build_web_compilers:
-  path: ^1.8.0
-  pedantic: ^1.11.0
-  test: ^1.16.8
-  yaml: ^3.1.0
+  build_test:
+  lints:
+  path:
+  shelf:
+  test:
+  yaml:
