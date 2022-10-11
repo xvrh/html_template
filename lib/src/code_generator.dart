@@ -61,11 +61,11 @@ String generateCodeFromFunction(FunctionDeclaration function,
   options ??= Options();
   var code = StringBuffer();
 
-  if (!function.name.name.startsWith('_')) {
+  if (!function.name.lexeme.startsWith('_')) {
     throw GeneratorException(
-        'Template function must be private ${function.name.name}');
+        'Template function must be private ${function.name.lexeme}');
   }
-  var functionName = function.name.name.substring(1);
+  var functionName = function.name.lexeme.substring(1);
 
   var returnType = 'TrustedHtml';
   if (function.returnType.toString().startsWith('Future') ||
@@ -74,7 +74,7 @@ String generateCodeFromFunction(FunctionDeclaration function,
   }
 
   if (options.addGenerateForAttribute) {
-    code.writeln('@GenerateFor(${function.name.name})');
+    code.writeln('@GenerateFor(${function.name.lexeme})');
   }
 
   var parametersCode = StringBuffer();
