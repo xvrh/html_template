@@ -8,6 +8,7 @@ part of 'switch.dart';
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_switchExample)
 TrustedHtml switchExample(Season season) {
   var $ = StringBuffer();

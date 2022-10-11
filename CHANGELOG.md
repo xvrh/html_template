@@ -1,3 +1,8 @@
+## 0.2.2
+
+- Replace `package:pedantic` with `package:lints`
+- Upgrade `package:analyzer` dependency.
+
 ## 0.2.1
 
 - Support latest version of dependencies

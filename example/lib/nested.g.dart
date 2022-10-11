@@ -8,6 +8,7 @@ part of 'nested.dart';
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_myTemplate)
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
@@ -25,6 +26,7 @@ TrustedHtml myTemplate() {
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_img)
 TrustedHtml img(String url) {
   var $ = StringBuffer();

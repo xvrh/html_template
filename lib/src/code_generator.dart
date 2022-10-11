@@ -1,12 +1,14 @@
 import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
+// ignore: implementation_imports
 import 'package:analyzer/src/dart/ast/to_source_visitor.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:html/dom.dart' hide Comment;
 import 'package:html/dom.dart' as html;
 import 'package:html/dom_parsing.dart';
 import 'package:html/parser.dart';
+// ignore: implementation_imports
 import 'package:html/src/constants.dart';
 import 'attributes.dart';
 import 'utils.dart';
@@ -59,11 +61,11 @@ String generateCodeFromFunction(FunctionDeclaration function,
   options ??= Options();
   var code = StringBuffer();
 
-  if (!function.name.name.startsWith('_')) {
+  if (!function.name.lexeme.startsWith('_')) {
     throw GeneratorException(
-        'Template function must be private ${function.name.name}');
+        'Template function must be private ${function.name.lexeme}');
   }
-  var functionName = function.name.name.substring(1);
+  var functionName = function.name.lexeme.substring(1);
 
   var returnType = 'TrustedHtml';
   if (function.returnType.toString().startsWith('Future') ||
@@ -72,7 +74,7 @@ String generateCodeFromFunction(FunctionDeclaration function,
   }
 
   if (options.addGenerateForAttribute) {
-    code.writeln('@GenerateFor(${function.name.name})');
+    code.writeln('@GenerateFor(${function.name.lexeme})');
   }
 
   var parametersCode = StringBuffer();

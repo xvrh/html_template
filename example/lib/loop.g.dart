@@ -8,6 +8,7 @@ part of 'loop.dart';
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_simpleLoop)
 TrustedHtml simpleLoop(List<MenuItem> menu) {
   var $ = StringBuffer();
@@ -32,6 +33,7 @@ TrustedHtml simpleLoop(List<MenuItem> menu) {
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_alternativeLoop)
 TrustedHtml alternativeLoop(List<MenuItem> menu) {
   var $ = StringBuffer();

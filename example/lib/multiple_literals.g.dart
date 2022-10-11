@@ -8,6 +8,7 @@ part of 'multiple_literals.dart';
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_movieTemplate)
 Future<TrustedHtml> movieTemplate() async {
   var $ = StringBuffer();

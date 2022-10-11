@@ -8,6 +8,7 @@ part of 'condition.dart';
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_conditionExample)
 Future<TrustedHtml> conditionExample({required bool someCondition}) async {
   var $ = StringBuffer();
@@ -42,6 +43,7 @@ Future<TrustedHtml> conditionExample({required bool someCondition}) async {
 
 // ignore_for_file: duplicate_ignore
 // ignore_for_file: unused_local_variable
+// ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_conditionAlt)
 TrustedHtml conditionAlt({required bool showMenu}) {
   var $ = StringBuffer();
