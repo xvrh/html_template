@@ -51,7 +51,7 @@ void _pageTemplate(Product product, {List<String>? scripts}) {
 
 #### Generate the code
 
-- `pub run build_runner watch --delete-conflicting-outputs`
+- `dart run build_runner watch --delete-conflicting-outputs`
 
 This generates a public function with the same arguments as the original. The generated code looks like:
 ```dart
