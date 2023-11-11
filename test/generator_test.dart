@@ -263,13 +263,10 @@ void _myTemplate(List<Data> data, {bool? showMenu}) {
 TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
   var $ = StringBuffer();
   
-  $.write('<h1>');
-  $.write('H');
-  $.write('</h1>');
+  $.writeln('''<h1>H</h1>''');
+
   if (showMenu) {
-    $.write('<h1>');
-    $.write('Title');
-    $.write('</h1>');
+    $.writeln('<h1>Title</h1>');
   } else {
     Data item;
     $.write('<ul>');
@@ -280,7 +277,7 @@ TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
     }
     $.write('</ul>');
   }
-  $.write('end');
+  $.writeln('end');
   
   return TrustedHtml($.toString());
 }
@@ -548,7 +545,7 @@ TrustedHtml myTemplate() {
 ''')));
   });
 
-  test('Should support complete html document', () {
+  test('Should support complete html document with doctype', () {
     var input = r"""
 _myTemplate() {
   '''
@@ -586,6 +583,175 @@ TrustedHtml myTemplate() {
   
   return TrustedHtml($.toString());
 }    
+''')));
+  });
+
+  test('Should support complete html document without doctype', () {
+    var input = r"""
+_myTemplate() {
+  '''
+<html language="${Language.current.code}">
+  <head>
+    <title>Mon ${info.title}</title>
+  </head>
+  <body>
+    <h1>Title</h1>
+  </body>
+</html>
+  ''';
+}
+    """;
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
+    expect(result, equals(DartFormatter().format(r'''
+TrustedHtml myTemplate() {
+  var $ = StringBuffer();
+  
+  $.write('<html language="${TrustedHtml.escape.attribute(Language.current.code)}">');
+  $.write('<head>');
+  $.write('<title>');
+  $.write('Mon ${TrustedHtml.escape(info.title)}');
+  $.write('</title>');
+  $.write('</head>');
+  $.write('<body>');
+  $.write('<h1>');
+  $.write('Title');
+  $.write('</h1>');
+  $.write('</body>');
+  $.write('</html>');
+  
+  return TrustedHtml($.toString());
+}    
+''')));
+  });
+
+  test('doctype as independent literal', () {
+    var input = r"""
+_myTemplate() {
+  '<!doctype html>';
+  '''
+<html language="${Language.current.code}">
+  <head>
+    <title>Mon ${info.title}</title>
+  </head>
+  <body>
+    <h1>Title</h1>
+  </body>
+</html>
+  ''';
+}
+    """;
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
+    expect(result, equals(DartFormatter().format(r'''
+TrustedHtml myTemplate() {
+  var $ = StringBuffer();
+  
+  $.writeln('<!doctype html>');
+
+  $.write('<html language="${TrustedHtml.escape.attribute(Language.current.code)}">');
+  $.write('<head>');
+  $.write('<title>');
+  $.write('Mon ${TrustedHtml.escape(info.title)}');
+  $.write('</title>');
+  $.write('</head>');
+  $.write('<body>');
+  $.write('<h1>');
+  $.write('Title');
+  $.write('</h1>');
+  $.write('</body>');
+  $.write('</html>');
+  
+  return TrustedHtml($.toString());
+}    
+''')));
+  });
+
+  test('Alternative loop', () {
+    var input = r"""
+@template
+void _alternativeLoop(List<MenuItem> menu) {
+  '<ul>';
+  for (var item in menu) {
+    '<li>${item.title}</li>';
+  }
+  '</ul>';
+}
+""";
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
+    expect(result, equals(DartFormatter().format(r'''
+TrustedHtml alternativeLoop(List<MenuItem> menu) {
+  var $ = StringBuffer();
+
+  $.writeln('<ul>');
+
+  for (var item in menu) {
+    $.write('<li>');
+    $.write('${TrustedHtml.escape(item.title)}');
+    $.write('</li>');
+  }
+  $.writeln('</ul>');
+
+  return TrustedHtml($.toString());
+}
+''')));
+  });
+
+  test('Alternative loop with attribute', () {
+    var input = r"""
+@template
+void _alternativeLoop(List<MenuItem> menu) {
+  '<ul lang="${Language.current}">';
+  for (var item in menu) {
+    '<li>${item.title}</li>';
+  }
+  '</ul>';
+}
+""";
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
+    expect(result, equals(DartFormatter().format(r'''
+TrustedHtml alternativeLoop(List<MenuItem> menu) {
+  var $ = StringBuffer();
+
+  $.write('<ul lang="${TrustedHtml.escape.attribute(Language.current)}">');
+
+  for (var item in menu) {
+    $.write('<li>');
+    $.write('${TrustedHtml.escape(item.title)}');
+    $.write('</li>');
+  }
+  $.writeln('</ul>');
+
+  return TrustedHtml($.toString());
+}
+''')));
+  }, skip: 'Need fix, should not ouput the closing ul tab before the loop');
+
+  test('Custom html', () {
+    var input = r"""
+@template
+void _html() {
+  'Text';
+  '${Language.current}';
+  'Text: ${Language.current}';
+}
+""";
+    var result =
+        generateCodeForTest(input, options: Options(skipWhitespaces: true));
+    expect(result, equals(DartFormatter().format(r'''
+TrustedHtml html() {
+  var $ = StringBuffer();
+
+  $.writeln('Text');
+  
+  $.write('${TrustedHtml.escape(Language.current)}');
+
+  $.write('Text: ${TrustedHtml.escape(Language.current)}');
+
+  return TrustedHtml($.toString());
+}
 ''')));
   });
 

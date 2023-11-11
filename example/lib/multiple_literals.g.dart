@@ -13,26 +13,22 @@ part of 'multiple_literals.dart';
 Future<TrustedHtml> movieTemplate() async {
   var $ = StringBuffer();
 
-  $.write('<h1>');
-  $.write('My movies');
-  $.write('</h1>');
+  $.writeln('<h1>My movies</h1>');
+
   var page = await fetchPage();
   if (!page.isLoggedIn) {
-    $.write('<h2>');
-    $.write('Log in');
-    $.write('</h2>');
+    $.writeln('<h2>Log in</h2>');
   } else {
-    $.write('<ul>');
-    $.write('</ul>');
+    $.writeln('<ul>');
+
     for (var movie in page.myMovies) {
       $.write('<li${template.classAttribute({'favorite': movie.isFavorite})}>');
       $.write('${TrustedHtml.escape(movie)}');
       $.write('</li>');
     }
+    $.writeln('</ul>');
   }
-  $.write('<footer>');
-  $.write('Footer');
-  $.write('</footer>');
+  $.writeln('<footer>Footer</footer>');
 
   return TrustedHtml($.toString());
 }

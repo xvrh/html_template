@@ -1,3 +1,8 @@
+## 0.3.0
+
+- Fix alternative loop syntax
+- Fix `<doctype>`
+
 ## 0.2.2
 
 - Replace `package:pedantic` with `package:lints`

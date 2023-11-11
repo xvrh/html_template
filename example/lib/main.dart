@@ -21,7 +21,6 @@ void _productTemplate(Product product) {
 @template
 void _pageTemplate(Product product, {List<String>? scripts}) {
   var script = '';
-  '<!doctype html>';
   '''
 <html lang="${Language.current}">
   <head>

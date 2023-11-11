@@ -16,7 +16,7 @@ void main() {
   });
 
   test('simple template', () {
-    eq(simpleTemplate(), '<h1>Title</h1>');
+    eq(simpleTemplate(), '<h1>Title</h1>\n');
   });
 
   test('condition', () {
@@ -40,10 +40,10 @@ void main() {
   test('switch', () {
     eq(switchTemplate(MyEnum.one), '''
 <div><span>One</span></div>
-<span>End</span>''');
+<span>End</span>\n''');
     eq(switchTemplate(null), '''
 <div><span>Default</span></div>
-<span>End</span>''');
+<span>End</span>\n''');
   });
 
   test('Attributes', () {

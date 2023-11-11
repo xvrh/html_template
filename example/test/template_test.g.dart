@@ -23,9 +23,7 @@ TrustedHtml emptyTemplate() {
 TrustedHtml simpleTemplate() {
   var $ = StringBuffer();
 
-  $.write('<h1>');
-  $.write('Title');
-  $.write('</h1>');
+  $.writeln('''<h1>Title</h1>''');
 
   return TrustedHtml($.toString());
 }
@@ -101,9 +99,7 @@ TrustedHtml switchTemplate(MyEnum? myEnum) {
   $.write('</div>');
   $.write('\n');
 
-  $.write('<span>');
-  $.write('End');
-  $.write('</span>');
+  $.writeln('<span>End</span>');
 
   return TrustedHtml($.toString());
 }

@@ -9,13 +9,19 @@ jobs:
   analyze_and_test:
     name: Analyse
     runs-on: ubuntu-latest
-    container:
-      image:  dart:stable
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 'stable'
       - run: dart --version
       - run: dart pub get && (cd example && dart pub get)
       - run: dart analyze --fatal-infos
       - run: dart --enable-asserts tool/prepare_submit.dart
       - name: "check for uncommitted changes"
-        run: git diff --exit-code --stat -- .
+        run: |
+          git diff --exit-code --stat -- . \
+          || (echo "##[error] found changed files after build. please run 'dart tool/prepare_submit.dart'" \
+                   "and check in all changes" \
+              && exit 1)
+        shell: bash

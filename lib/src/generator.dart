@@ -47,5 +47,5 @@ FunctionDeclaration _extractFunctionDeclaration(String fileContent,
 
   return unit.declarations
       .whereType<FunctionDeclaration>()
-      .firstWhere((d) => d.name.lexeme == functionName);
+      .firstWhere((d) => d.name.toString() == functionName);
 }
