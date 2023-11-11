@@ -61,11 +61,11 @@ String generateCodeFromFunction(FunctionDeclaration function,
   options ??= Options();
   var code = StringBuffer();
 
-  if (!function.name.lexeme.startsWith('_')) {
+  if (!function.name.toString().startsWith('_')) {
     throw GeneratorException(
-        'Template function must be private ${function.name.lexeme}');
+        'Template function must be private ${function.name.toString()}');
   }
-  var functionName = function.name.lexeme.substring(1);
+  var functionName = function.name.toString().substring(1);
 
   var returnType = 'TrustedHtml';
   if (function.returnType.toString().startsWith('Future') ||
@@ -74,7 +74,7 @@ String generateCodeFromFunction(FunctionDeclaration function,
   }
 
   if (options.addGenerateForAttribute) {
-    code.writeln('@GenerateFor(${function.name.lexeme})');
+    code.writeln('@GenerateFor(${function.name.toString()})');
   }
 
   var parametersCode = StringBuffer();
@@ -138,7 +138,7 @@ class _Replacement {
 class _Printer extends ToSourceVisitor {
   final List<_Replacement> replacements;
 
-  _Printer(StringSink sink, this.replacements) : super(sink);
+  _Printer(super.sink, this.replacements);
 
   @override
   void visitExpressionStatement(ExpressionStatement node) {
@@ -154,31 +154,37 @@ class _Printer extends ToSourceVisitor {
 String _handleStringLiteral(Options options, StringLiteral literal) {
   var content = literal.stringValue;
   var outputer = _CodeWriter(options);
+
+  var hasInterpolation = false;
   if (content == null && literal is SingleStringLiteral) {
     var literalBuffer = StringBuffer();
-    literal.accept(
-        _InterpolationEscaper(literalBuffer, outputer.stringReplacements));
+    var interpolationEscaper =
+        _InterpolationEscaper(literalBuffer, outputer.stringReplacements);
+    literal.accept(interpolationEscaper);
     var literalString = literalBuffer.toString();
 
     var openOffset = literal.contentsOffset - literal.offset;
 
     content = literalString.substring(
         openOffset, literalString.length - (literal.isMultiline ? 3 : 1));
+    hasInterpolation = interpolationEscaper.hasSeenInterpolation;
   } else if (literal is AdjacentStrings) {
     throw UnimplementedError();
   } else if (content == null) {
     throw UnimplementedError();
   }
 
-  var lowerContent = content.toLowerCase();
-  if (lowerContent.contains('<html ') ||
-      lowerContent.contains('<html>') ||
-      lowerContent.contains('<!doctype ')) {
-    var dom = parse(content);
-    outputer.writeNode(dom);
+  if (hasInterpolation) {
+    var lowerContent = content.toLowerCase().trim();
+    if (lowerContent.contains('<html ') || lowerContent.contains('<html>')) {
+      var dom = parse(content);
+      outputer.writeNode(dom);
+    } else {
+      var dom = parseFragment(content);
+      outputer.writeNode(dom);
+    }
   } else {
-    var dom = parseFragment(content);
-    outputer.writeNode(dom);
+    outputer.writeLiteral(literal.toSource());
   }
 
   return outputer.output.toString();
@@ -188,7 +194,7 @@ class _InterpolationEscaper extends ToSourceVisitor {
   final Map<String, String> stringReplacements;
   int _index = 0;
 
-  _InterpolationEscaper(StringSink sink, this.stringReplacements) : super(sink);
+  _InterpolationEscaper(super.sink, this.stringReplacements);
 
   @override
   void visitInterpolationExpression(InterpolationExpression node) {
@@ -200,6 +206,8 @@ class _InterpolationEscaper extends ToSourceVisitor {
     stringReplacements[alias] = original.toString();
     sink.write(alias);
   }
+
+  bool get hasSeenInterpolation => _index > 0;
 }
 
 class _CodeWriter {
@@ -226,6 +234,10 @@ class _CodeWriter {
     } else {
       assert(false, 'Unknown type ${node.runtimeType}');
     }
+  }
+
+  void writeLiteral(String content) {
+    output.writeln("\$.writeln($content);");
   }
 
   String _withInterpolation(String data,

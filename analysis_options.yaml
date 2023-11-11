@@ -18,8 +18,7 @@ linter:
     constant_identifier_names: true
     empty_statements: true
     hash_and_equals: true
-    iterable_contains_unrelated_type: true
-    list_remove_unrelated_type: true
+    collection_methods_unrelated_type: true
     no_adjacent_strings_in_list: true
     non_constant_identifier_names: true
     only_throw_errors: true
