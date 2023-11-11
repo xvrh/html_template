@@ -38,13 +38,14 @@ TrustedHtml simpleLoop(List<MenuItem> menu) {
 TrustedHtml alternativeLoop(List<MenuItem> menu) {
   var $ = StringBuffer();
 
-  $.write('<ul>');
-  $.write('</ul>');
+  $.writeln('<ul>');
+
   for (var item in menu) {
     $.write('<li>');
     $.write('${TrustedHtml.escape(item.title)}');
     $.write('</li>');
   }
+  $.writeln('</ul>');
 
   return TrustedHtml($.toString());
 }

@@ -34,13 +34,6 @@ TrustedHtml pageTemplate(Product product, {List<String>? scripts}) {
   var $ = StringBuffer();
 
   var script = '';
-  $.writeln('<!DOCTYPE html>');
-  $.write('<html>');
-  $.write('<head>');
-  $.write('</head>');
-  $.write('<body>');
-  $.write('</body>');
-  $.write('</html>');
   $.write('<html lang="${TrustedHtml.escape.attribute(Language.current)}">');
   $.write('<head>');
   $.write('\n    ');

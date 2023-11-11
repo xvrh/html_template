@@ -48,13 +48,10 @@ Future<TrustedHtml> conditionExample({required bool someCondition}) async {
 TrustedHtml conditionAlt({required bool showMenu}) {
   var $ = StringBuffer();
 
-  $.write('<h1>');
-  $.write('Title');
-  $.write('</h1>');
+  $.writeln('<h1>Title</h1>');
+
   if (!showMenu) {
-    $.write('<h2>');
-    $.write('Sub title');
-    $.write('</h2>');
+    $.writeln('<h2>Sub title</h2>');
   }
 
   return TrustedHtml($.toString());
