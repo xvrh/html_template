@@ -23,7 +23,8 @@ Future<TrustedHtml> conditionExample({required bool someCondition}) async {
   }
   $.write('\n  \n  ');
   $.writeln(
-      '''<!--  Include the 'disabled' attribute if the condition is true  -->''');
+    '''<!--  Include the 'disabled' attribute if the condition is true  -->''',
+  );
   $.write('\n  ');
   $.write('<input${template.attributeIf('disabled', someCondition)}>');
   $.write('\n  \n  ');

@@ -13,10 +13,9 @@ part of 'css_classes.dart';
 TrustedHtml cssClassesExample(List<Data> data, {bool showMenu = false}) {
   var $ = StringBuffer();
 
-  $.write('<li${template.classAttribute({
-        'active': showMenu,
-        'enabled': data.isNotEmpty
-      })}>');
+  $.write(
+    '<li${template.classAttribute({'active': showMenu, 'enabled': data.isNotEmpty})}>',
+  );
   $.write('Actif');
   $.write('</li>');
   var myClasses = {'enabled': showMenu};

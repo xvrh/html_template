@@ -1,45 +1,79 @@
+import 'package:analyzer/dart/analysis/utilities.dart';
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:html_template/src/code_generator.dart';
 import 'package:html_template/src/interpolation.dart';
 import 'package:test/test.dart';
 
+final _dartFormatter = DartFormatter(
+  languageVersion: DartFormatter.latestLanguageVersion,
+);
+
+String generateCode(String input, {Options? options}) {
+  var parsed = parseString(content: input);
+  if (parsed.errors.isNotEmpty) {
+    throw Exception(parsed.errors.toString());
+  }
+  var unit = parsed.unit;
+
+  var firstFunction = unit.declarations.whereType<FunctionDeclaration>().first;
+  var rawCode = generateCodeFromFunction(firstFunction, options: options);
+
+  try {
+    return _dartFormatter.format(rawCode);
+  } catch (e) {
+    print('Failed to format source code: $rawCode');
+    rethrow;
+  }
+}
+
 String generateCodeForTest(String input, {Options? options}) {
   options ??= Options();
-  return generateCode(input,
-      options: options.copyWith(addGenerateForAttribute: false));
+  return generateCode(
+    input,
+    options: options.copyWith(addGenerateForAttribute: false),
+  );
 }
 
 void main() {
   test('Convert function signature with void', () {
     var input = r'void _myTemplate({required bool showMenu}) {}';
-    expect(generateCodeForTest(input),
-        startsWith(r'TrustedHtml myTemplate({required bool showMenu}) {'));
+    expect(
+      generateCodeForTest(input),
+      startsWith(r'TrustedHtml myTemplate({required bool showMenu}) {'),
+    );
   });
 
   test('Convert function signature with Future', () {
     var input = r'Future _myTemplate({bool? showMenu}) {}';
-    expect(generateCodeForTest(input),
-        startsWith(r'Future<TrustedHtml> myTemplate({bool? showMenu}) {'));
+    expect(
+      generateCodeForTest(input),
+      startsWith(r'Future<TrustedHtml> myTemplate({bool? showMenu}) {'),
+    );
   });
 
   test('Convert function signature with Future<void>', () {
     var input = r'Future<void> _myTemplate({bool? showMenu}) {}';
-    expect(generateCodeForTest(input),
-        startsWith(r'Future<TrustedHtml> myTemplate({bool? showMenu}) {'));
+    expect(
+      generateCodeForTest(input),
+      startsWith(r'Future<TrustedHtml> myTemplate({bool? showMenu}) {'),
+    );
   });
 
   test('Convert function signature with empty async', () {
     var input = r'_myTemplate({bool? showMenu}) async {}';
     expect(
-        generateCodeForTest(input),
-        startsWith(
-            r'Future<TrustedHtml> myTemplate({bool? showMenu}) async {'));
+      generateCodeForTest(input),
+      startsWith(r'Future<TrustedHtml> myTemplate({bool? showMenu}) async {'),
+    );
   });
 
   test('Convert function signature with empty not async', () {
     var input = r'_myTemplate({bool? showMenu}) {}';
-    expect(generateCodeForTest(input),
-        startsWith(r'TrustedHtml myTemplate({bool? showMenu}) {'));
+    expect(
+      generateCodeForTest(input),
+      startsWith(r'TrustedHtml myTemplate({bool? showMenu}) {'),
+    );
   });
 
   test('Generate code from template function', () {
@@ -61,7 +95,10 @@ void _myTemplate({bool? showMenu}) {
 
     var result = generateCodeForTest(input);
 
-    expect(result, equals(DartFormatter().format(r"""
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r"""
 TrustedHtml myTemplate({bool? showMenu}) {
   var $ = StringBuffer();
   
@@ -80,7 +117,9 @@ TrustedHtml myTemplate({bool? showMenu}) {
   
   return TrustedHtml($.toString());
 }
-""")));
+"""),
+      ),
+    );
   });
 
   test('Generate code with loop', () {
@@ -93,7 +132,10 @@ void _myTemplate(List<Data> data, {required bool showMenu}) {
 }
 """;
     var result = generateCodeForTest(input);
-    expect(result, equals(DartFormatter().format(r"""
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r"""
 TrustedHtml myTemplate(List<Data> data, {required bool showMenu}) {
   var $ = StringBuffer();
   
@@ -109,7 +151,9 @@ TrustedHtml myTemplate(List<Data> data, {required bool showMenu}) {
   
   return TrustedHtml($.toString());
 }
-""")));
+"""),
+      ),
+    );
   });
 
   test('Generate code with complex loop', () {
@@ -122,7 +166,10 @@ void _myTemplate(List<Data> data, {bool? showMenu}) {
 }
 """;
     var result = generateCodeForTest(input);
-    expect(result, equals(DartFormatter().format(r"""
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
   var $ = StringBuffer();
   
@@ -138,7 +185,9 @@ TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
   
   return TrustedHtml($.toString());
 }
-""")));
+"""),
+      ),
+    );
   });
 
   test('Generate code with multi loop', () {
@@ -153,10 +202,15 @@ void _myTemplate(List<Data>? data, {bool? showMenu}) {
 }
 """;
 
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
 
-    expect(result, equals(DartFormatter().format(r"""
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r"""
 TrustedHtml myTemplate(List<Data>? data, {bool? showMenu}) {
   var $ = StringBuffer();
   
@@ -174,7 +228,9 @@ TrustedHtml myTemplate(List<Data>? data, {bool? showMenu}) {
   
   return TrustedHtml($.toString());
 }
-""")));
+"""),
+      ),
+    );
   });
 
   test('Generate loop and if in the same tag', () {
@@ -187,10 +243,15 @@ void _myTemplate(List<Data> data, {required bool showMenu}) {
 }
 """;
 
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
 
-    expect(result, equals(DartFormatter().format(r"""
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r"""
 TrustedHtml myTemplate(List<Data> data, {required bool showMenu}) {
   var $ = StringBuffer();
   
@@ -206,7 +267,9 @@ TrustedHtml myTemplate(List<Data> data, {required bool showMenu}) {
   
   return TrustedHtml($.toString());
 }
-""")));
+"""),
+      ),
+    );
   });
 
   test('Never output text tag', () {
@@ -220,10 +283,15 @@ alb
 }
 """;
 
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
 
-    expect(result, equals(DartFormatter().format(r"""
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
   var $ = StringBuffer();
   
@@ -236,7 +304,9 @@ TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
   
   return TrustedHtml($.toString());
 }
-""")));
+"""),
+      ),
+    );
   });
 
   test('Allow multiple string literals', () {
@@ -257,9 +327,14 @@ void _myTemplate(List<Data> data, {bool? showMenu}) {
   'end';
 }
 """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r"""
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
   var $ = StringBuffer();
   
@@ -281,7 +356,9 @@ TrustedHtml myTemplate(List<Data> data, {bool? showMenu}) {
   
   return TrustedHtml($.toString());
 }
-""")));
+"""),
+      ),
+    );
   });
 
   test('Generate code with conditional attribute', () {
@@ -293,7 +370,10 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
 }
 """;
     var result = generateCodeForTest(input);
-    expect(result, equals(DartFormatter().format(r"""
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   var $ = StringBuffer();
   
@@ -305,7 +385,9 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   
   return TrustedHtml($.toString());
 }
-""")));
+"""),
+      ),
+    );
   });
 
   test('Generate code with classes', () {
@@ -318,7 +400,10 @@ void _myTemplate(List<Data> data, {bool showMenu}) {
 }
 """;
     var result = generateCodeForTest(input);
-    expect(result, equals(DartFormatter().format(r"""
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r"""
 TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
   var $ = StringBuffer();
   
@@ -333,7 +418,9 @@ TrustedHtml myTemplate(List<Data> data, {bool showMenu}) {
 
   return TrustedHtml($.toString());
 }
-""")));
+"""),
+      ),
+    );
   });
 
   test('Generate code from template expression', () {
@@ -344,7 +431,10 @@ void _myTemplate({bool showMenu}) =>
   ''';
 """;
     var result = generateCodeForTest(input);
-    expect(result, equals(DartFormatter().format(r"""
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r"""
 TrustedHtml myTemplate({bool showMenu}) {
   var $ = StringBuffer();
   
@@ -355,7 +445,9 @@ TrustedHtml myTemplate({bool showMenu}) {
   
   return TrustedHtml($.toString());
 }
-""")));
+"""),
+      ),
+    );
   });
 
   test('Generate code with dynamic attribute and tag name', () {
@@ -364,9 +456,14 @@ _myTemplate() {
   '<img $attr=""><$tag open></$tag>';
 }
     ''';
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
   
@@ -376,7 +473,9 @@ TrustedHtml myTemplate() {
   
   return TrustedHtml($.toString());
 }    
-''')));
+'''),
+      ),
+    );
   });
 
   test('Escape attribute with interpolation', () {
@@ -387,9 +486,14 @@ _myTemplate() {
   ''';
 }
     """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
   
@@ -398,7 +502,9 @@ TrustedHtml myTemplate() {
   
   return TrustedHtml($.toString());
 }    
-''')));
+'''),
+      ),
+    );
   });
 
   test('Text with single quote should be escaped', () {
@@ -409,9 +515,14 @@ _myTemplate() {
   ''';
 }
     """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
   
@@ -421,7 +532,9 @@ TrustedHtml myTemplate() {
   
   return TrustedHtml($.toString());
 }    
-''')));
+'''),
+      ),
+    );
   });
 
   test('Generate code with switch case', () {
@@ -439,9 +552,14 @@ _myTemplate() {
   ''';
 }
     """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
   
@@ -472,7 +590,9 @@ TrustedHtml myTemplate() {
   
   return TrustedHtml($.toString());
 }    
-''')));
+'''),
+      ),
+    );
   });
 
   test('Generate code switch with text', () {
@@ -490,9 +610,14 @@ _myTemplate() {
   ''';
 }
     """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
   
@@ -515,7 +640,9 @@ TrustedHtml myTemplate() {
   
   return TrustedHtml($.toString());
 }    
-''')));
+'''),
+      ),
+    );
   });
 
   test('Should support special character in interpolation', () {
@@ -527,9 +654,14 @@ _myTemplate() {
   ''';
 }
     """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
   
@@ -542,7 +674,9 @@ TrustedHtml myTemplate() {
   
   return TrustedHtml($.toString());
 }    
-''')));
+'''),
+      ),
+    );
   });
 
   test('Should support complete html document with doctype', () {
@@ -561,9 +695,14 @@ _myTemplate() {
   ''';
 }
     """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
   
@@ -583,7 +722,9 @@ TrustedHtml myTemplate() {
   
   return TrustedHtml($.toString());
 }    
-''')));
+'''),
+      ),
+    );
   });
 
   test('Should support complete html document without doctype', () {
@@ -601,9 +742,14 @@ _myTemplate() {
   ''';
 }
     """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
   
@@ -622,7 +768,9 @@ TrustedHtml myTemplate() {
   
   return TrustedHtml($.toString());
 }    
-''')));
+'''),
+      ),
+    );
   });
 
   test('doctype as independent literal', () {
@@ -641,9 +789,14 @@ _myTemplate() {
   ''';
 }
     """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml myTemplate() {
   var $ = StringBuffer();
   
@@ -664,7 +817,9 @@ TrustedHtml myTemplate() {
   
   return TrustedHtml($.toString());
 }    
-''')));
+'''),
+      ),
+    );
   });
 
   test('Alternative loop', () {
@@ -678,9 +833,14 @@ void _alternativeLoop(List<MenuItem> menu) {
   '</ul>';
 }
 """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml alternativeLoop(List<MenuItem> menu) {
   var $ = StringBuffer();
 
@@ -695,11 +855,15 @@ TrustedHtml alternativeLoop(List<MenuItem> menu) {
 
   return TrustedHtml($.toString());
 }
-''')));
+'''),
+      ),
+    );
   });
 
-  test('Alternative loop with attribute', () {
-    var input = r"""
+  test(
+    'Alternative loop with attribute',
+    () {
+      var input = r"""
 @template
 void _alternativeLoop(List<MenuItem> menu) {
   '<ul lang="${Language.current}">';
@@ -709,9 +873,14 @@ void _alternativeLoop(List<MenuItem> menu) {
   '</ul>';
 }
 """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+      var result = generateCodeForTest(
+        input,
+        options: Options(skipWhitespaces: true),
+      );
+      expect(
+        result,
+        equals(
+          _dartFormatter.format(r'''
 TrustedHtml alternativeLoop(List<MenuItem> menu) {
   var $ = StringBuffer();
 
@@ -726,8 +895,12 @@ TrustedHtml alternativeLoop(List<MenuItem> menu) {
 
   return TrustedHtml($.toString());
 }
-''')));
-  }, skip: 'Need fix, should not ouput the closing ul tab before the loop');
+'''),
+        ),
+      );
+    },
+    skip: 'Need fix, should not ouput the closing ul tab before the loop',
+  );
 
   test('Custom html', () {
     var input = r"""
@@ -738,9 +911,14 @@ void _html() {
   'Text: ${Language.current}';
 }
 """;
-    var result =
-        generateCodeForTest(input, options: Options(skipWhitespaces: true));
-    expect(result, equals(DartFormatter().format(r'''
+    var result = generateCodeForTest(
+      input,
+      options: Options(skipWhitespaces: true),
+    );
+    expect(
+      result,
+      equals(
+        _dartFormatter.format(r'''
 TrustedHtml html() {
   var $ = StringBuffer();
 
@@ -752,7 +930,9 @@ TrustedHtml html() {
 
   return TrustedHtml($.toString());
 }
-''')));
+'''),
+      ),
+    );
   });
 
   test('Extact interpolation', () {
@@ -761,19 +941,33 @@ TrustedHtml html() {
     expect(extractInterpolation(r'${myVar == null}'), equals('myVar == null'));
     expect(extractInterpolation(r'$myVar'), equals('myVar'));
     expect(extractInterpolation(r'${getData(xx)}'), equals('getData(xx)'));
-    expect(extractInterpolation(r"${{'enable': true}}"),
-        equals("{'enable': true}"));
-    expect(() => extractInterpolation('myVar'),
-        throwsA(TypeMatcher<GeneratorException>()));
-    expect(() => extractInterpolation(r'$myVar == true'),
-        throwsA(TypeMatcher<GeneratorException>()));
-    expect(() => extractInterpolation(r'${myVar} == true'),
-        throwsA(TypeMatcher<GeneratorException>()));
-    expect(() => extractInterpolation(r' ${myVar}'),
-        throwsA(TypeMatcher<GeneratorException>()));
-    expect(() => extractInterpolation(r'${myVar} '),
-        throwsA(TypeMatcher<GeneratorException>()));
-    expect(() => extractInterpolation(r'true'),
-        throwsA(TypeMatcher<GeneratorException>()));
+    expect(
+      extractInterpolation(r"${{'enable': true}}"),
+      equals("{'enable': true}"),
+    );
+    expect(
+      () => extractInterpolation('myVar'),
+      throwsA(TypeMatcher<GeneratorException>()),
+    );
+    expect(
+      () => extractInterpolation(r'$myVar == true'),
+      throwsA(TypeMatcher<GeneratorException>()),
+    );
+    expect(
+      () => extractInterpolation(r'${myVar} == true'),
+      throwsA(TypeMatcher<GeneratorException>()),
+    );
+    expect(
+      () => extractInterpolation(r' ${myVar}'),
+      throwsA(TypeMatcher<GeneratorException>()),
+    );
+    expect(
+      () => extractInterpolation(r'${myVar} '),
+      throwsA(TypeMatcher<GeneratorException>()),
+    );
+    expect(
+      () => extractInterpolation(r'true'),
+      throwsA(TypeMatcher<GeneratorException>()),
+    );
   });
 }

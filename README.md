@@ -64,12 +64,13 @@ TrustedHtml productTemplate(Product product) {
   }
   $.write('\n  ');
   $.write('<h1${template.classAttribute({'new': product.isNew})}>');
-  $.write('${TrustedHtml.escape(product)}');
+  $.write(TrustedHtml.escape(product));
   $.write('</h1>');
   $.write('\n  ');
 
   return TrustedHtml($.toString());
 }
+
 //...
 ```
 See the real generated code [here](example/lib/main.g.dart)
@@ -94,7 +95,7 @@ void main() {
 ```dart
 @template
 void _conditionExample({required bool someCondition}) async {
-  '''  
+  '''
   <!-- Conditionally include the <h2> tag -->
   <h2 *if="$someCondition">Condition on a tag</h2>
   

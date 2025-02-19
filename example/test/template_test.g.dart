@@ -108,17 +108,20 @@ TrustedHtml switchTemplate(MyEnum? myEnum) {
 // ignore_for_file: unused_local_variable
 // ignore_for_file: unnecessary_string_interpolations
 @GenerateFor(_attribute)
-TrustedHtml attribute(
-    {bool disabled = false, bool isActive = false, List<String>? classes}) {
+TrustedHtml attribute({
+  bool disabled = false,
+  bool isActive = false,
+  List<String>? classes,
+}) {
   var $ = StringBuffer();
 
   $.write(
-      '<input${template.attributeIf('disabled', disabled)}${template.classAttribute(classes, {
-        'active': isActive
-      })}>');
+    '<input${template.attributeIf('disabled', disabled)}${template.classAttribute(classes, {'active': isActive})}>',
+  );
   $.write('\n');
   $.write(
-      '<span${template.classAttribute({'aa': isActive, 'dis': disabled})}>');
+    '<span${template.classAttribute({'aa': isActive, 'dis': disabled})}>',
+  );
   $.write('</span>');
   $.write('\n');
 

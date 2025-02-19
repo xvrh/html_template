@@ -17,4 +17,5 @@ void _myTemplate() {
 void _img(String url) {
   '<img src="$url">';
 }
+
 //----

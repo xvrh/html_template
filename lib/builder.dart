@@ -3,7 +3,5 @@ import 'package:source_gen/source_gen.dart';
 import 'src/generator.dart';
 
 Builder templateBuilder(BuilderOptions options) {
-  return SharedPartBuilder([
-    TemplateGenerator(),
-  ], 'template_builder');
+  return SharedPartBuilder([TemplateGenerator()], 'template_builder');
 }

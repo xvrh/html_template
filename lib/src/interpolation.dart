@@ -1,7 +1,9 @@
 import 'code_generator.dart';
 
-final _interpolationExtractor =
-    RegExp(r'^\$\{(.+)\}$|^\$([a-z_$][a-z\d_$]*)?$', caseSensitive: false);
+final _interpolationExtractor = RegExp(
+  r'^\$\{(.+)\}$|^\$([a-z_$][a-z\d_$]*)?$',
+  caseSensitive: false,
+);
 
 String extractInterpolation(String code) {
   var match = _interpolationExtractor.firstMatch(code);
