@@ -11,16 +11,21 @@ class TemplateGenerator extends GeneratorForAnnotation<TemplateAnnotation> {
 
   @override
   String generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) {
+    Element element,
+    ConstantReader annotation,
+    BuildStep buildStep,
+  ) {
     if (element is! FunctionElement || !element.isPrivate) {
       throw InvalidGenerationSourceError(
-          '@Template() could only be applied on private functions',
-          element: element);
+        '@Template() could only be applied on private functions',
+        element: element,
+      );
     }
 
     var functionDeclaration = _extractFunctionDeclaration(
-        element.source.contents.data,
-        functionName: element.name);
+      element.source.contents.data,
+      functionName: element.name,
+    );
 
     try {
       var code = generateCodeFromFunction(functionDeclaration);
@@ -37,15 +42,17 @@ $code
   }
 }
 
-FunctionDeclaration _extractFunctionDeclaration(String fileContent,
-    {required String functionName}) {
+FunctionDeclaration _extractFunctionDeclaration(
+  String fileContent, {
+  required String functionName,
+}) {
   var parsed = parseString(content: fileContent);
   if (parsed.errors.isNotEmpty) {
     throw Exception(parsed.errors.toString());
   }
   var unit = parsed.unit;
 
-  return unit.declarations
-      .whereType<FunctionDeclaration>()
-      .firstWhere((d) => d.name.toString() == functionName);
+  return unit.declarations.whereType<FunctionDeclaration>().firstWhere(
+    (d) => d.name.toString() == functionName,
+  );
 }

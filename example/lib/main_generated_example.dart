@@ -14,11 +14,12 @@ TrustedHtml productTemplate(Product product) {
   }
   $.write('\n  ');
   $.write('<h1${template.classAttribute({'new': product.isNew})}>');
-  $.write('${TrustedHtml.escape(product)}');
+  $.write(TrustedHtml.escape(product));
   $.write('</h1>');
   $.write('\n  ');
 
   return TrustedHtml($.toString());
 }
+
 //...
 //----

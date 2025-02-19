@@ -1,10 +1,14 @@
 import 'code_generator.dart' show GeneratorException;
 import 'interpolation.dart';
 
-final _classAttributeExtractor =
-    RegExp(r'^\[class\.([a-z0-9-_]+)\]$', caseSensitive: false);
-final _conditionalExtractor =
-    RegExp(r'^\[([a-z0-9-_]+)\]$', caseSensitive: false);
+final _classAttributeExtractor = RegExp(
+  r'^\[class\.([a-z0-9-_]+)\]$',
+  caseSensitive: false,
+);
+final _conditionalExtractor = RegExp(
+  r'^\[([a-z0-9-_]+)\]$',
+  caseSensitive: false,
+);
 
 final _structuralDirectives = <String, StructuralAttribute Function(String)>{
   'if': (attribute) => IfAttribute(attribute),
@@ -21,10 +25,12 @@ class Attributes {
   final _classes = <String>[];
   final structurals = <StructuralAttribute>[];
 
-  Attributes(Map<Object, String> attributesFromElement,
-      {required this.stringReplacements})
-      : _attributes =
-            attributesFromElement.map((k, v) => MapEntry(k.toString(), v)) {
+  Attributes(
+    Map<Object, String> attributesFromElement, {
+    required this.stringReplacements,
+  }) : _attributes = attributesFromElement.map(
+         (k, v) => MapEntry(k.toString(), v),
+       ) {
     for (var attribute in _attributes.entries.toList()) {
       var name = attribute.key;
       var classMatch = _classAttributeExtractor.firstMatch(name);
@@ -65,19 +71,22 @@ class Attributes {
       var conditionalMatch = _conditionalExtractor.firstMatch(name);
       if (conditionalMatch != null) {
         code.add(
-            "\${template.attributeIf('${conditionalMatch.group(1)}', ${extractInterpolation(_withInterpolation(value, escape: false))})}");
+          "\${template.attributeIf('${conditionalMatch.group(1)}', ${extractInterpolation(_withInterpolation(value, escape: false))})}",
+        );
       } else {
         value = value.replaceAll("'", r"\'");
         code.add(
-            ' ${_withInterpolation(name, escape: false)}="${_withInterpolation(value, escape: true)}"');
+          ' ${_withInterpolation(name, escape: false)}="${_withInterpolation(value, escape: true)}"',
+        );
       }
     }
     if (_class.isNotEmpty || _classes.isNotEmpty) {
       var classArguments = <String>[];
       classArguments.addAll(_classes);
       if (_class.isNotEmpty) {
-        var mapArguments =
-            _class.entries.map((e) => "'${e.key}': ${e.value}").join(', ');
+        var mapArguments = _class.entries
+            .map((e) => "'${e.key}': ${e.value}")
+            .join(', ');
         classArguments.add('{$mapArguments}');
       }
 
@@ -100,7 +109,7 @@ class IfAttribute extends StructuralAttribute {
   final String condition;
 
   IfAttribute(String attributeValue)
-      : condition = extractInterpolation(attributeValue);
+    : condition = extractInterpolation(attributeValue);
 
   @override
   String get openStructure {
@@ -111,8 +120,10 @@ class IfAttribute extends StructuralAttribute {
   String get closeStructure => '}';
 }
 
-final _forExtractor =
-    RegExp(r'^\s*(\S+)\s+in\s+(.+)\s*$', caseSensitive: false);
+final _forExtractor = RegExp(
+  r'^\s*(\S+)\s+in\s+(.+)\s*$',
+  caseSensitive: false,
+);
 
 class ForAttribute extends StructuralAttribute {
   late final String _item, _iterable;
@@ -121,7 +132,8 @@ class ForAttribute extends StructuralAttribute {
     var extracted = _forExtractor.firstMatch(attributeValue);
     if (extracted == null) {
       throw GeneratorException(
-          r'*for attributes must be in the format: *for="$item in $iterable"');
+        r'*for attributes must be in the format: *for="$item in $iterable"',
+      );
     }
     _item = removeBang(extractInterpolation(extracted.group(1)!));
     _iterable = extractInterpolation(extracted.group(2)!);

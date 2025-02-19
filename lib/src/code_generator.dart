@@ -1,9 +1,7 @@
-import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 // ignore: implementation_imports
 import 'package:analyzer/src/dart/ast/to_source_visitor.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:html/dom.dart' hide Comment;
 import 'package:html/dom.dart' as html;
 import 'package:html/dom_parsing.dart';
@@ -18,8 +16,8 @@ class Options {
   final bool addGenerateForAttribute;
 
   Options({bool? skipWhitespaces, bool? addGenerateForAttribute})
-      : skipWhitespaces = skipWhitespaces ?? false,
-        addGenerateForAttribute = addGenerateForAttribute ?? true;
+    : skipWhitespaces = skipWhitespaces ?? false,
+      addGenerateForAttribute = addGenerateForAttribute ?? true;
 
   Options copyWith({bool? skipWhitespaces, bool? addGenerateForAttribute}) =>
       Options(
@@ -38,32 +36,17 @@ class GeneratorException implements Exception {
   String toString() => message;
 }
 
-String generateCode(String input, {Options? options}) {
-  var parsed = parseString(content: input);
-  if (parsed.errors.isNotEmpty) {
-    throw Exception(parsed.errors.toString());
-  }
-  var unit = parsed.unit;
-
-  var firstFunction = unit.declarations.whereType<FunctionDeclaration>().first;
-  var rawCode = generateCodeFromFunction(firstFunction, options: options);
-
-  try {
-    return DartFormatter().format(rawCode);
-  } catch (e) {
-    print('Failed to format source code: $rawCode');
-    rethrow;
-  }
-}
-
-String generateCodeFromFunction(FunctionDeclaration function,
-    {Options? options}) {
+String generateCodeFromFunction(
+  FunctionDeclaration function, {
+  Options? options,
+}) {
   options ??= Options();
   var code = StringBuffer();
 
   if (!function.name.toString().startsWith('_')) {
     throw GeneratorException(
-        'Template function must be private ${function.name.toString()}');
+      'Template function must be private ${function.name.toString()}',
+    );
   }
   var functionName = function.name.toString().substring(1);
 
@@ -78,10 +61,13 @@ String generateCodeFromFunction(FunctionDeclaration function,
   }
 
   var parametersCode = StringBuffer();
-  ToSourceVisitor(parametersCode)
-      .visitFormalParameterList(function.functionExpression.parameters!);
-  code.writeln('$returnType $functionName$parametersCode'
-      '${function.functionExpression.body.isAsynchronous ? 'async' : ''} {');
+  ToSourceVisitor(
+    parametersCode,
+  ).visitFormalParameterList(function.functionExpression.parameters!);
+  code.writeln(
+    '$returnType $functionName$parametersCode'
+    '${function.functionExpression.body.isAsynchronous ? 'async' : ''} {',
+  );
   code.writeln(r'var $ = StringBuffer();');
   code.writeln('');
 
@@ -158,15 +144,19 @@ String _handleStringLiteral(Options options, StringLiteral literal) {
   var hasInterpolation = false;
   if (content == null && literal is SingleStringLiteral) {
     var literalBuffer = StringBuffer();
-    var interpolationEscaper =
-        _InterpolationEscaper(literalBuffer, outputer.stringReplacements);
+    var interpolationEscaper = _InterpolationEscaper(
+      literalBuffer,
+      outputer.stringReplacements,
+    );
     literal.accept(interpolationEscaper);
     var literalString = literalBuffer.toString();
 
     var openOffset = literal.contentsOffset - literal.offset;
 
     content = literalString.substring(
-        openOffset, literalString.length - (literal.isMultiline ? 3 : 1));
+      openOffset,
+      literalString.length - (literal.isMultiline ? 3 : 1),
+    );
     hasInterpolation = interpolationEscaper.hasSeenInterpolation;
   } else if (literal is AdjacentStrings) {
     throw UnimplementedError();
@@ -240,15 +230,19 @@ class _CodeWriter {
     output.writeln("\$.writeln($content);");
   }
 
-  String _withInterpolation(String data,
-      {String Function(String)? transformer}) {
+  String _withInterpolation(
+    String data, {
+    String Function(String)? transformer,
+  }) {
     for (var replacementEntry in stringReplacements.entries) {
       var replacement = replacementEntry.value;
       if (transformer != null) {
         replacement = transformer(replacement);
       }
       data = data.replaceAllMapped(
-          replacementEntry.key, (_) => '\${$replacement}');
+        replacementEntry.key,
+        (_) => '\${$replacement}',
+      );
     }
     return data;
   }
@@ -286,20 +280,24 @@ class _CodeWriter {
       text = text.replaceAll("'", r"\'");
     }
 
-    text = _withInterpolation(text,
-        transformer: shouldEscape ? (s) => 'TrustedHtml.escape($s)' : null);
+    text = _withInterpolation(
+      text,
+      transformer: shouldEscape ? (s) => 'TrustedHtml.escape($s)' : null,
+    );
 
     output.writeln('\$.write($quote$text$quote);');
   }
 
   void _writeComment(html.Comment comment) {
     output.writeln(
-        "\$.writeln('''<!-- ${_withInterpolation(comment.data ?? '', transformer: (s) => 'TrustedHtml.escape($s)')} -->''');");
+      "\$.writeln('''<!-- ${_withInterpolation(comment.data ?? '', transformer: (s) => 'TrustedHtml.escape($s)')} -->''');",
+    );
   }
 
   void _writeDocumentType(DocumentType documentType) {
-    output
-        .write("\$.writeln('${_withInterpolation(documentType.toString())}');");
+    output.write(
+      "\$.writeln('${_withInterpolation(documentType.toString())}');",
+    );
   }
 
   void _writeDocumentFragment(DocumentFragment documentFragment) {
@@ -315,8 +313,10 @@ class _CodeWriter {
   }
 
   void _writeElement(Element element) {
-    var attributes = Attributes(element.attributes.cast<Object, String>(),
-        stringReplacements: stringReplacements);
+    var attributes = Attributes(
+      element.attributes.cast<Object, String>(),
+      stringReplacements: stringReplacements,
+    );
 
     var isText = element.localName == 'text';
 
@@ -350,12 +350,14 @@ class _CodeWriter {
       }
     }
 
-    structurals(enclose: false)
-        .forEach((a) => output.writeln(a.closeStructure));
+    structurals(
+      enclose: false,
+    ).forEach((a) => output.writeln(a.closeStructure));
 
     if (!isText && !isVoidElement(element.localName)) {
       output.write(
-          "\$.write('</${_withInterpolation(element.localName ?? 'unknown')}>');");
+        "\$.write('</${_withInterpolation(element.localName ?? 'unknown')}>');",
+      );
     }
 
     structurals(enclose: true).forEach((a) => output.writeln(a.closeStructure));

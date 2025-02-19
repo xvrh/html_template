@@ -12,8 +12,13 @@ class TemplateAnnotation {
   }
 
   /// Build a class attribute
-  String classAttribute(Object? class1,
-      [Object? class2, Object? class3, Object? class4, Object? class5]) {
+  String classAttribute(
+    Object? class1, [
+    Object? class2,
+    Object? class3,
+    Object? class4,
+    Object? class5,
+  ]) {
     var classes = <String>{};
     for (var arg in [class1, class2, class3, class4, class5]) {
       if (arg != null) {

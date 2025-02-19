@@ -52,14 +52,16 @@ void main() {
 <span class="aa dis"></span>
 ''');
     eq(
-        attribute(
-            disabled: false,
-            isActive: true,
-            classes: ['my-class', 'my-class', 'other']),
-        '''
+      attribute(
+        disabled: false,
+        isActive: true,
+        classes: ['my-class', 'my-class', 'other'],
+      ),
+      '''
 <input class="my-class other active">
 <span class="aa"></span>
-''');
+''',
+    );
   });
 }
 
@@ -103,8 +105,11 @@ void _switchTemplate(MyEnum? myEnum) {
 }
 
 @template
-void _attribute(
-    {bool disabled = false, bool isActive = false, List<String>? classes}) {
+void _attribute({
+  bool disabled = false,
+  bool isActive = false,
+  List<String>? classes,
+}) {
   '''
 <input [disabled]="$disabled" [class.active]="$isActive" [classes]="$classes">
 <span [classes]="${{'aa': isActive, 'dis': disabled}}"></span>
