@@ -4,7 +4,7 @@ version: 0.3.1
 homepage: https://github.com/xvrh/html_template
 
 environment:
-  sdk: '^3.6.0'
+  sdk: '^3.7.0'
 
 dependencies:
   analyzer: ^7.3.0

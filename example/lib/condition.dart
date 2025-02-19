@@ -7,7 +7,7 @@ part 'condition.g.dart';
 //---simple
 @template
 void _conditionExample({required bool someCondition}) async {
-  '''  
+  '''
   <!-- Conditionally include the <h2> tag -->
   <h2 *if="$someCondition">Condition on a tag</h2>
   
