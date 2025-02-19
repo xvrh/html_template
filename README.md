@@ -95,7 +95,7 @@ void main() {
 ```dart
 @template
 void _conditionExample({required bool someCondition}) async {
-  '''  
+  '''
   <!-- Conditionally include the <h2> tag -->
   <h2 *if="$someCondition">Condition on a tag</h2>
   
