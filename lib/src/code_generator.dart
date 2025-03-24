@@ -147,8 +147,11 @@ class _Printer extends ToSourceVisitor {
   @override
   void visitAssignmentExpression(AssignmentExpression node) {
     if (node.leftHandSide case PrefixedIdentifier prefixed) {
-      if (prefixed.prefix.name == 'template' && prefixed.identifier.name == 'master') {
-        sink.writeln('TrustedHtml Function(TrustedHtml) \$master = ${node.rightHandSide.toSource()}');
+      if (prefixed.prefix.name == 'template' &&
+          prefixed.identifier.name == 'master') {
+        sink.writeln(
+          'TrustedHtml Function(TrustedHtml) \$master = ${node.rightHandSide.toSource()}',
+        );
         hasMaster = true;
         return;
       }

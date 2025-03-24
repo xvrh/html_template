@@ -34,4 +34,3 @@ class Product {
   String? get icon => '';
   String get name => '';
 }
-
