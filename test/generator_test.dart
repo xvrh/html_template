@@ -970,4 +970,40 @@ TrustedHtml html() {
       throwsA(TypeMatcher<GeneratorException>()),
     );
   });
+
+  test('Convert master template', () {
+    var input = r'''void _myTemplate() {
+      template.master = (body) => myMaster(body);
+    }''';
+    expect(
+      generateCodeForTest(input),
+      startsWith(r'''TrustedHtml myTemplate() {
+  var $ = StringBuffer();
+
+  TrustedHtml Function(TrustedHtml) $master = (body) => myMaster(body);
+
+  return $master(TrustedHtml($.toString()));
+}
+'''),
+    );
+  });
+
+  test('Convert master template with block', () {
+    var input = r'''void _myTemplate() {
+      template.master = (body) { myMaster(body); };
+    }''';
+    expect(
+      generateCodeForTest(input),
+      startsWith(r'''TrustedHtml myTemplate() {
+  var $ = StringBuffer();
+
+  TrustedHtml Function(TrustedHtml) $master = (body) {
+    myMaster(body);
+  };
+
+  return $master(TrustedHtml($.toString()));
+}
+'''),
+    );
+  });
 }

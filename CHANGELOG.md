@@ -1,3 +1,27 @@
+## 0.4.0
+
+- Allow to set a master template within a template.
+```dart
+@template
+void _productTemplate(Product product) {
+  // ... the template
+  
+  // Call this to automatically wrap productTemplate in the pageTemplate
+  template.master = (body) => pageTemplate(title: product.name, body: body);
+}
+
+@template
+void _pageTemplate({required String title, required TrustedHtml body}) {
+  '''
+<html>
+  <head><title>$title</title></head>
+  <body>$body</body>
+</html>
+  ''';
+}
+ 
+```
+
 ## 0.3.1
 
 - Upgrade dependencies
