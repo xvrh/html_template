@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'main.dart';
+part of 'master_details.dart';
 
 // **************************************************************************
 // TemplateGenerator
@@ -26,7 +26,10 @@ TrustedHtml productTemplate(Product product) {
   $.write('</h1>');
   $.write('\n  ');
 
-  return TrustedHtml($.toString());
+  TrustedHtml Function(TrustedHtml) $master =
+      (body) => master(title: product.name, body: body);
+
+  return $master(TrustedHtml($.toString()));
 }
 
 // ignore_for_file: duplicate_ignore
@@ -35,28 +38,24 @@ TrustedHtml productTemplate(Product product) {
 // ignore_for_file: unnecessary_brace_in_string_interps
 // ignore_for_file: unnecessary_string_interpolations
 // ignore_for_file: unused_local_variable
-@GenerateFor(_pageTemplate)
-TrustedHtml pageTemplate(Product product, {List<String>? scripts}) {
+@GenerateFor(_master)
+TrustedHtml master({required String title, required TrustedHtml body}) {
   var $ = StringBuffer();
 
-  var script = '';
-  $.write('<html lang="${TrustedHtml.escape.attribute(Language.current)}">');
+  $.writeln('<!doctype html>');
+
+  $.write('<html>');
   $.write('<head>');
   $.write('\n    ');
   $.write('<title>');
-  $.write('${TrustedHtml.escape(product.name)} - My site');
+  $.write('${TrustedHtml.escape(title)}');
   $.write('</title>');
-  $.write('\n    ');
-  for (var script in template.nonNullIterable(scripts)) {
-    $.write('<script src="${TrustedHtml.escape.attribute(script)}" async="">');
-    $.write('</script>');
-  }
   $.write('\n  ');
   $.write('</head>');
   $.write('\n  ');
   $.write('<body>');
   $.write('''
-    ${TrustedHtml.escape(productTemplate(product))}
+    ${TrustedHtml.escape(body)}
   
 
   ''');

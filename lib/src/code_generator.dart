@@ -72,6 +72,7 @@ String generateCodeFromFunction(
   code.writeln('');
 
   var body = function.functionExpression.body;
+  var hasMaster = false;
   if (body is BlockFunctionBody) {
     var visitor = _Visitor(options);
     body.visitChildren(visitor);
@@ -79,6 +80,7 @@ String generateCodeFromFunction(
     var bodyCode = StringBuffer();
     var printer = _Printer(bodyCode, visitor._replacements);
     body.block.visitChildren(printer);
+    hasMaster = printer.hasMaster;
 
     code.writeln(bodyCode);
   } else if (body is ExpressionFunctionBody) {
@@ -89,7 +91,12 @@ String generateCodeFromFunction(
   }
 
   code.writeln('');
-  code.writeln(r'return TrustedHtml($.toString());');
+  var bodyExpression = r'TrustedHtml($.toString())';
+  if (hasMaster) {
+    bodyExpression = '\$master($bodyExpression)';
+  }
+
+  code.writeln('return $bodyExpression;');
   code.write('}');
 
   return code.toString();
@@ -123,6 +130,7 @@ class _Replacement {
 
 class _Printer extends ToSourceVisitor {
   final List<_Replacement> replacements;
+  bool hasMaster = false;
 
   _Printer(super.sink, this.replacements);
 
@@ -134,6 +142,18 @@ class _Printer extends ToSourceVisitor {
     } else {
       super.visitExpressionStatement(node);
     }
+  }
+
+  @override
+  void visitAssignmentExpression(AssignmentExpression node) {
+    if (node.leftHandSide case PrefixedIdentifier prefixed) {
+      if (prefixed.prefix.name == 'template' && prefixed.identifier.name == 'master') {
+        sink.writeln('TrustedHtml Function(TrustedHtml) \$master = ${node.rightHandSide.toSource()}');
+        hasMaster = true;
+        return;
+      }
+    }
+    super.visitAssignmentExpression(node);
   }
 }
 

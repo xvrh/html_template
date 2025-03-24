@@ -7,8 +7,11 @@ part of 'css_classes.dart';
 // **************************************************************************
 
 // ignore_for_file: duplicate_ignore
-// ignore_for_file: unused_local_variable
+// ignore_for_file: omit_local_variable_types
+// ignore_for_file: prefer_function_declarations_over_variables
+// ignore_for_file: unnecessary_brace_in_string_interps
 // ignore_for_file: unnecessary_string_interpolations
+// ignore_for_file: unused_local_variable
 @GenerateFor(_cssClassesExample)
 TrustedHtml cssClassesExample(List<Data> data, {bool showMenu = false}) {
   var $ = StringBuffer();

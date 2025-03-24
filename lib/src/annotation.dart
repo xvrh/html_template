@@ -46,6 +46,9 @@ class TemplateAnnotation {
   Iterable<T> nonNullIterable<T>(Iterable<T>? iterable) => iterable ?? const [];
 
   bool nonNullBool(bool? value) => value ?? false;
+
+  // ignore: avoid_setters_without_getters
+  set master(void Function(TrustedHtml body) template) {}
 }
 
 /// The annotation to put on a private method to activate the builder on it.
